@@ -427,3 +427,50 @@ export const DEFAULT_EXHIBITIONS: ExhibitionConfig[] = [
     values: { ...INITIAL_FORM_VALUES },
   },
 ];
+
+export function readAndOptimizeImageFile(
+  file: File,
+  onSuccess: (dataUrl: string) => void
+): void {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const result = reader.result;
+    if (typeof result !== 'string') return;
+    if (result.length < 450_000 || file.type === 'image/svg+xml') {
+      onSuccess(result);
+      return;
+    }
+    const img = new window.Image();
+    img.onload = () => {
+      const maxDim = 1400;
+      let width = img.naturalWidth || img.width;
+      let height = img.naturalHeight || img.height;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        onSuccess(result);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      const isPng = file.type === 'image/png' || file.type === 'image/webp';
+      const optimized = isPng
+        ? canvas.toDataURL('image/png')
+        : canvas.toDataURL('image/jpeg', 0.85);
+      onSuccess(optimized.length < result.length ? optimized : result);
+    };
+    img.onerror = () => onSuccess(result);
+    img.src = result;
+  };
+  reader.readAsDataURL(file);
+}

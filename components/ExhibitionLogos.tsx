@@ -2,7 +2,10 @@
 
 import React, { useRef, useState } from 'react';
 import { Globe, Upload, RotateCcw } from 'lucide-react';
-import { LogoPresetType } from '@/lib/exhibition-data';
+import {
+  LogoPresetType,
+  readAndOptimizeImageFile,
+} from '@/lib/exhibition-data';
 
 interface MainLogoProps {
   logoType: LogoPresetType;
@@ -23,13 +26,9 @@ export function ExhibitionMainLogo({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onUploadLogo(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    readAndOptimizeImageFile(file, (dataUrl) => {
+      onUploadLogo(dataUrl);
+    });
     e.target.value = '';
   };
 
@@ -257,13 +256,9 @@ export function EcoExpoFooterLogo({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onUploadLogo(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    readAndOptimizeImageFile(file, (dataUrl) => {
+      onUploadLogo(dataUrl);
+    });
     e.target.value = '';
   };
 

@@ -8,7 +8,6 @@ import {
   Trash2,
   Copy,
   FileCheck2,
-  Eraser,
   Sliders,
   Image as ImageIcon,
   Layers,
@@ -21,6 +20,7 @@ import {
   CustomExtraField,
   ExhibitionConfig,
   FieldIconName,
+  readAndOptimizeImageFile,
   SectorLayoutType,
   THEME_PRESETS,
   ThemePresetId,
@@ -34,7 +34,6 @@ interface FormCustomizerPanelProps {
   onToggleTemplateEditMode: () => void;
   onUpdateConfig: (partial: Partial<ExhibitionConfig>) => void;
   onFillSampleData: () => void;
-  onClearFormValues: () => void;
   onCopyValuesToAll: () => void;
   onResetCurrentTemplate: () => void;
 }
@@ -66,7 +65,6 @@ export function FormCustomizerPanel({
   onToggleTemplateEditMode,
   onUpdateConfig,
   onFillSampleData,
-  onClearFormValues,
   onCopyValuesToAll,
   onResetCurrentTemplate,
 }: FormCustomizerPanelProps) {
@@ -97,13 +95,9 @@ export function FormCustomizerPanel({
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onUpdateConfig({ [target]: reader.result });
-      }
-    };
-    reader.readAsDataURL(file);
+    readAndOptimizeImageFile(file, (dataUrl) => {
+      onUpdateConfig({ [target]: dataUrl });
+    });
     e.target.value = '';
   };
 
@@ -189,10 +183,10 @@ export function FormCustomizerPanel({
         <button
           type="button"
           onClick={onResetCurrentTemplate}
-          className="px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
-          title="Reset this exhibition form to default design"
+          className="px-2.5 py-1.5 text-xs font-bold text-black bg-white border border-black rounded-lg hover:bg-amber-100/80 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
+          title="Reset default colors, Balanced (-2px) field size, pictures, icons, and fields while keeping all written form data unchanged"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3.5 h-3.5 text-black" />
           <span>Reset Default</span>
         </button>
       </div>
@@ -1000,15 +994,6 @@ export function FormCustomizerPanel({
             >
               <Copy className="w-4 h-4" />
               <span>Copy Exhibitor Info to All 3 Forms</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onClearFormValues}
-              className="w-full py-2.5 px-3 bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Eraser className="w-4 h-4" />
-              <span>Clear Active Form Inputs</span>
             </button>
           </div>
         )}

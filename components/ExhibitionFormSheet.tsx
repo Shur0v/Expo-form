@@ -29,6 +29,7 @@ import {
   ExhibitionConfig,
   ExhibitionFormValues,
   FieldIconName,
+  readAndOptimizeImageFile,
   THEME_PRESETS,
 } from '@/lib/exhibition-data';
 import {
@@ -100,13 +101,9 @@ export function ExhibitionFormSheet({
   const handleHeaderBgFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        onUpdateConfig({ customHeaderBgUrl: reader.result });
-      }
-    };
-    reader.readAsDataURL(file);
+    readAndOptimizeImageFile(file, (dataUrl) => {
+      onUpdateConfig({ customHeaderBgUrl: dataUrl });
+    });
     e.target.value = '';
   };
 
@@ -134,7 +131,7 @@ export function ExhibitionFormSheet({
   );
 
   return (
-    <div className="w-[794px] min-h-[1123px] bg-white text-black font-[family-name:var(--font-inter)] shadow-xl ring-1 ring-slate-300/80 flex flex-col justify-between relative overflow-hidden print:shadow-none print:ring-0 print:w-[210mm] print:min-h-[297mm] print:m-0 select-none">
+    <div className="w-[794px] h-[1122px] min-h-[1122px] bg-white text-black font-[family-name:var(--font-inter)] shadow-xl ring-1 ring-slate-300/80 flex flex-col justify-between relative overflow-hidden [print-color-adjust:exact] [-webkit-print-color-adjust:exact] print:shadow-none print:ring-0 print:w-[210mm] print:h-[297mm] print:min-h-[297mm] print:max-h-[297mm] print:m-0 print:p-0 select-none">
       {/* ==================== TOP GEOMETRIC HEADER BANNER (Open Sans Font) ==================== */}
       <div className="relative w-full h-[156px] shrink-0 bg-[#F7F8FA] overflow-hidden font-[family-name:var(--font-open-sans)] group">
         {interactive && (
