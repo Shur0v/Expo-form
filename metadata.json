@@ -1,0 +1,6 @@
+{
+  "name": "Exhibition Registration Form Studio",
+  "description": "Dynamic, customizable A4 exhibition registration forms for Dhaka International Expos built with Next.js, TypeScript, Tailwind CSS, and Open Sans.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
