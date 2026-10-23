@@ -1,5 +1,6 @@
 'use client';
 
+import { EXHIBITION_ASSETS } from '@/lib/exhibition-assets';
 import React, { useRef } from 'react';
 import {
   Check,
@@ -131,7 +132,7 @@ export function ExhibitionFormSheet({
   );
 
   return (
-    <div className="w-[794px] h-[1122px] min-h-[1122px] bg-white text-black font-[family-name:var(--font-inter)] shadow-xl ring-1 ring-slate-300/80 flex flex-col justify-between relative overflow-hidden [print-color-adjust:exact] [-webkit-print-color-adjust:exact] print:shadow-none print:ring-0 print:w-[210mm] print:h-[297mm] print:min-h-[297mm] print:max-h-[297mm] print:m-0 print:p-0 select-none">
+    <div data-exhibition-sheet={config.id} className="w-[794px] h-[1122px] min-h-[1122px] bg-white text-black font-[family-name:var(--font-inter)] shadow-xl ring-1 ring-slate-300/80 flex flex-col justify-between relative overflow-hidden [print-color-adjust:exact] [-webkit-print-color-adjust:exact] print:shadow-none print:ring-0 print:w-[210mm] print:h-[297mm] print:min-h-[297mm] print:max-h-[297mm] print:m-0 print:p-0 select-none">
       {/* ==================== TOP GEOMETRIC HEADER BANNER (Open Sans Font) ==================== */}
       <div className="relative w-full h-[156px] shrink-0 bg-[#F7F8FA] overflow-hidden font-[family-name:var(--font-open-sans)] group">
         {interactive && (
@@ -619,22 +620,9 @@ export function ExhibitionFormSheet({
             <div
               className={`w-[188px] shrink-0 ${theme.sectorCardBg} rounded-l-[10px] [clip-path:polygon(0_0,88%_0,100%_100%,0_100%)] flex items-center pl-3.5 pr-5 py-2`}
             >
-              <div className="w-[34px] h-[34px] rounded-lg shrink-0 flex flex-col justify-center gap-[3px] overflow-hidden p-1 transform -rotate-45">
-                <div
-                  className={`w-full h-[3px] ${theme.primaryAccentBg} rounded-full`}
-                />
-                <div
-                  className={`w-full h-[3px] ${theme.primaryAccentBg} rounded-full`}
-                />
-                <div
-                  className={`w-full h-[3px] ${theme.primaryAccentBg} rounded-full`}
-                />
-                <div
-                  className={`w-full h-[3px] ${theme.primaryAccentBg} rounded-full`}
-                />
-                <div
-                  className={`w-full h-[3px] ${theme.primaryAccentBg} rounded-full`}
-                />
+              <div className="w-[34px] h-[34px] shrink-0 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={EXHIBITION_ASSETS[config.logoType].sectorIcon} alt="" className="w-full h-full object-contain block" />
               </div>
               <div className="ml-2.5 flex flex-col leading-[1.14]">
                 <span className="text-[14px] font-extrabold text-[#111827]">

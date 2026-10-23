@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useSyncExternalStore } from 'react';
+import { flushSync } from 'react-dom';
+import { exportExhibitionPdf } from '@/lib/export-exhibition-pdf';
 import { Printer, RotateCcw } from 'lucide-react';
 import {
   DEFAULT_EXHIBITIONS,
@@ -260,6 +262,8 @@ export function ExhibitionWorkspace() {
     getServerSnapshot
   );
   const [templateEditMode, setTemplateEditMode] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const activeConfig = exhibitions[activeIndex] || exhibitions[0];
 
@@ -435,16 +439,24 @@ export function ExhibitionWorkspace() {
     }
   };
 
-  const handlePrint = () => {
-    if (templateEditMode) {
+  const handlePrint = async () => {
+    if (isExporting) return;
+    // Commit the final inline edit and remove editor decoration before capture.
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    flushSync(() => {
       setTemplateEditMode(false);
-      window.setTimeout(() => {
-        window.focus();
-        window.print();
-      }, 60);
-    } else {
-      window.focus();
-      window.print();
+      setIsExporting(true);
+      setExportError(null);
+    });
+    try {
+      const sheets = Array.from(document.querySelectorAll<HTMLElement>('[data-exhibition-sheet]'));
+      const name = viewMode === 'all-three' ? 'ECO-Expo-All-Forms' : activeConfig.id;
+      await exportExhibitionPdf(sheets, `${name}.pdf`);
+    } catch (error) {
+      console.error('PDF export failed', error);
+      setExportError('Unable to download the PDF. Please check that all images have loaded and try again.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -499,13 +511,16 @@ export function ExhibitionWorkspace() {
           <button
             type="button"
             onClick={handlePrint}
+            disabled={isExporting}
+            aria-busy={isExporting}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>Print / Export PDF</span>
+            <span>{isExporting ? 'Preparing PDF…' : 'Print / Export PDF'}</span>
           </button>
         </div>
       </header>
+      {exportError && <p role="alert" className="px-6 py-2 text-sm text-red-700 print:hidden">{exportError}</p>}
 
       {/* ==================== MAIN WORKSPACE AREA ==================== */}
       <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
