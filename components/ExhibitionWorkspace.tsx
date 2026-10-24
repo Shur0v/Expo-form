@@ -12,10 +12,23 @@ import {
 } from '@/lib/exhibition-data';
 import { ExhibitionFormSheet } from '@/components/ExhibitionFormSheet';
 import { FormCustomizerPanel } from '@/components/FormCustomizerPanel';
+import { BarterAgreementSheet } from '@/components/BarterAgreementSheet';
+import { BarterAgreementEditor } from '@/components/BarterAgreementEditor';
+import { useBarterAgreement } from '@/hooks/use-barter-agreement';
+import './barter-agreement.css';
 
 const STORAGE_KEY_CONFIGS = 'ecoexpo_exhibitions_configs_v2';
 const STORAGE_KEY_VALUES = 'ecoexpo_exhibitions_values_v2';
 const STORAGE_KEY_UI = 'ecoexpo_exhibitions_ui_v2';
+
+function subscribePage(listener: () => void) {
+  window.addEventListener('hashchange', listener);
+  return () => window.removeEventListener('hashchange', listener);
+}
+
+function getBarterPageSnapshot() {
+  return window.location.hash === '#barter-agreement';
+}
 
 interface WorkspaceStoreState {
   exhibitions: ExhibitionConfig[];
@@ -264,6 +277,11 @@ export function ExhibitionWorkspace() {
   const [templateEditMode, setTemplateEditMode] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const isBarterActive = useSyncExternalStore(subscribePage, getBarterPageSnapshot, () => false);
+  const setIsBarterActive = (active: boolean) => {
+    window.location.assign(active ? '#barter-agreement' : '#top');
+  };
+  const { agreement, updateAgreement, resetDesign: resetBarterDesign } = useBarterAgreement();
 
   const activeConfig = exhibitions[activeIndex] || exhibitions[0];
 
@@ -407,6 +425,10 @@ export function ExhibitionWorkspace() {
   };
 
   const handleResetTopBar = () => {
+    if (isBarterActive) {
+      resetBarterDesign();
+      return;
+    }
     if (viewMode === 'all-three') {
       updateWorkspaceStore((prev) => ({
         ...prev,
@@ -450,7 +472,7 @@ export function ExhibitionWorkspace() {
     });
     try {
       const sheets = Array.from(document.querySelectorAll<HTMLElement>('[data-exhibition-sheet]'));
-      const name = viewMode === 'all-three' ? 'ECO-Expo-All-Forms' : activeConfig.id;
+      const name = isBarterActive ? 'ECO-Expo-Barter-Agreement' : viewMode === 'all-three' ? 'ECO-Expo-All-Forms' : activeConfig.id;
       await exportExhibitionPdf(sheets, `${name}.pdf`);
     } catch (error) {
       console.error('PDF export failed', error);
@@ -463,7 +485,7 @@ export function ExhibitionWorkspace() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 print:min-h-0 print:bg-white print:block print:m-0 print:p-0">
       {/* ==================== TOP BAR (3-Zone Contract) ==================== */}
-      <header className="flex items-center justify-between gap-8 px-6 py-3.5 bg-white border-b border-slate-200 print:hidden">
+      <header className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3.5 bg-white border-b border-slate-200 print:hidden">
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#top"
@@ -473,12 +495,13 @@ export function ExhibitionWorkspace() {
         </a>
 
         {/* Zone 2: 3 concise single-line text navigation links */}
-        <nav className="flex items-center gap-6 text-sm font-semibold text-slate-600 overflow-x-auto">
+        <nav className="flex order-3 w-full lg:order-none lg:w-auto items-center gap-6 text-sm font-semibold text-slate-600 overflow-x-auto">
           {exhibitions.map((expo, idx) => (
             <button
               key={expo.id}
               type="button"
               onClick={() => {
+                setIsBarterActive(false);
                 updateWorkspaceStore((prev) => ({
                   ...prev,
                   activeIndex: idx,
@@ -486,7 +509,7 @@ export function ExhibitionWorkspace() {
                 }));
               }}
               className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${
-                viewMode === 'single' && activeIndex === idx
+                !isBarterActive && viewMode === 'single' && activeIndex === idx
                   ? 'text-slate-900 border-slate-900'
                   : 'border-transparent'
               }`}
@@ -494,6 +517,11 @@ export function ExhibitionWorkspace() {
               {expo.shortCode}
             </button>
           ))}
+          <button type="button" onClick={() => setIsBarterActive(true)}
+            aria-current={isBarterActive ? 'page' : undefined}
+            className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${isBarterActive ? 'text-slate-900 border-slate-900' : 'border-transparent'}`}>
+            Barter Agreement
+          </button>
         </nav>
 
         {/* Zone 3: Reset Default + Print / Export PDF Actions */}
@@ -502,7 +530,7 @@ export function ExhibitionWorkspace() {
             type="button"
             onClick={handleResetTopBar}
             className="px-3.5 py-2 text-xs font-bold text-black bg-white border border-black rounded-lg hover:bg-amber-100/80 transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
-            title="Reset default colors, Balanced (-2px) field size, pictures, icons, and fields while keeping all written form data unchanged"
+            title={isBarterActive ? 'Restore the agreement title, logo, and text spacing while keeping entered details and terms' : 'Reset default colors, Balanced (-2px) field size, pictures, icons, and fields while keeping all written form data unchanged'}
           >
             <RotateCcw className="w-3.5 h-3.5 text-black" />
             <span>Reset Default</span>
@@ -526,7 +554,7 @@ export function ExhibitionWorkspace() {
       <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
         {/* Left/Center A4 Form Viewport */}
         <div className="w-full flex-1 flex flex-col items-center overflow-x-auto pb-8 print:pb-0 print:m-0 print:p-0 print:w-[210mm] print:block print:overflow-visible">
-          {viewMode === 'single' ? (
+          {isBarterActive ? <BarterAgreementSheet agreement={agreement} onChange={updateAgreement} /> : viewMode === 'single' ? (
             <div className="flex flex-col items-center print:block print:m-0 print:p-0 print:w-[210mm]">
               <ExhibitionFormSheet
                 config={activeConfig}
@@ -604,7 +632,7 @@ export function ExhibitionWorkspace() {
         </div>
 
         {/* Right Customizer Panel */}
-        <FormCustomizerPanel
+        {isBarterActive ? <BarterAgreementEditor agreement={agreement} onChange={updateAgreement} /> : <FormCustomizerPanel
           config={activeConfig}
           viewMode={viewMode}
           onChangeViewMode={setViewMode}
@@ -614,7 +642,7 @@ export function ExhibitionWorkspace() {
           onFillSampleData={() => handleFillSampleData(activeIndex)}
           onCopyValuesToAll={handleCopyValuesToAll}
           onResetCurrentTemplate={() => handleResetTemplate(activeIndex)}
-        />
+        />}
       </main>
     </div>
   );
