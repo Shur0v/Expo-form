@@ -444,6 +444,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="companyName"
+              aria-label="companyName"
               value={values.companyName}
               onChange={(e) => onChangeValue('companyName', e.target.value)}
               readOnly={!interactive}
@@ -464,6 +466,8 @@ export function ExhibitionFormSheet({
               </label>
               <input
                 type="text"
+                name="country"
+                aria-label="country"
                 value={values.country}
                 onChange={(e) => onChangeValue('country', e.target.value)}
                 readOnly={!interactive}
@@ -482,6 +486,8 @@ export function ExhibitionFormSheet({
               </label>
               <input
                 type="text"
+                name="topStallNo"
+                aria-label="topStallNo"
                 value={values.topStallNo}
                 onChange={(e) => onChangeValue('topStallNo', e.target.value)}
                 readOnly={!interactive}
@@ -493,6 +499,7 @@ export function ExhibitionFormSheet({
           {/* 5 Icon Badge Rows */}
           <IconInputRow
             icon="map-pin"
+            name="companyAddress"
             label="COMPANY ADDRESS"
             value={values.companyAddress}
             onChange={(v) => onChangeValue('companyAddress', v)}
@@ -505,6 +512,7 @@ export function ExhibitionFormSheet({
           />
           <IconInputRow
             icon="mail"
+            name="emailAddress"
             label="EMAIL ADDRESS"
             value={values.emailAddress}
             onChange={(v) => onChangeValue('emailAddress', v)}
@@ -517,6 +525,7 @@ export function ExhibitionFormSheet({
           />
           <IconInputRow
             icon="package"
+            name="productToExhibit"
             label="PRODUCT TO EXHIBIT"
             value={values.productToExhibit}
             onChange={(v) => onChangeValue('productToExhibit', v)}
@@ -529,6 +538,7 @@ export function ExhibitionFormSheet({
           />
           <IconInputRow
             icon="phone"
+            name="whatsappNo"
             label="WHATSAPP NO."
             value={values.whatsappNo}
             onChange={(v) => onChangeValue('whatsappNo', v)}
@@ -542,6 +552,7 @@ export function ExhibitionFormSheet({
           />
           <IconInputRow
             icon="globe"
+            name="website"
             label="WEBSITE"
             value={values.website}
             onChange={(v) => onChangeValue('website', v)}
@@ -557,6 +568,7 @@ export function ExhibitionFormSheet({
           {companyExtraFields.map((ef) => (
             <IconInputRow
               key={ef.id}
+              name={`extra-${ef.id}`}
               icon={ef.icon}
               label={ef.label}
               value={ef.value}
@@ -592,6 +604,8 @@ export function ExhibitionFormSheet({
                 return (
                   <button
                     key={type}
+                    data-pdf-checkbox={`businessTypes-${type}`}
+                    data-pdf-checked={checked}
                     type="button"
                     onClick={() => toggleArrayItem('businessTypes', type)}
                     className="flex items-center group cursor-pointer focus:outline-none"
@@ -645,6 +659,8 @@ export function ExhibitionFormSheet({
                     return (
                       <button
                         key={sector}
+                        data-pdf-checkbox={`selectedSectors-${sector}`}
+                        data-pdf-checked={checked}
                         type="button"
                         onClick={() =>
                           toggleArrayItem('selectedSectors', sector)
@@ -674,6 +690,8 @@ export function ExhibitionFormSheet({
                     return (
                       <button
                         key={sector}
+                        data-pdf-checkbox={`selectedSectors-${sector}`}
+                        data-pdf-checked={checked}
                         type="button"
                         onClick={() =>
                           toggleArrayItem('selectedSectors', sector)
@@ -703,6 +721,8 @@ export function ExhibitionFormSheet({
                     return (
                       <button
                         key={sector}
+                        data-pdf-checkbox={`selectedSectors-${sector}`}
+                        data-pdf-checked={checked}
                         type="button"
                         onClick={() =>
                           toggleArrayItem('selectedSectors', sector)
@@ -753,6 +773,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="contactName"
+              aria-label="contactName"
               value={values.contactName}
               onChange={(e) => onChangeValue('contactName', e.target.value)}
               readOnly={!interactive}
@@ -777,6 +799,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="contactWhatsapp"
+              aria-label="contactWhatsapp"
               value={values.contactWhatsapp}
               onChange={(e) => onChangeValue('contactWhatsapp', e.target.value)}
               readOnly={!interactive}
@@ -791,6 +815,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="secondPersonWhatsapp"
+              aria-label="secondPersonWhatsapp"
               value={values.secondPersonWhatsapp}
               onChange={(e) =>
                 onChangeValue('secondPersonWhatsapp', e.target.value)
@@ -819,6 +845,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="representativesCount"
+              aria-label="representativesCount"
               value={values.representativesCount}
               onChange={(e) =>
                 onChangeValue('representativesCount', e.target.value)
@@ -842,6 +870,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="contactEmail"
+              aria-label="contactEmail"
               value={values.contactEmail}
               onChange={(e) => onChangeValue('contactEmail', e.target.value)}
               readOnly={!interactive}
@@ -853,6 +883,7 @@ export function ExhibitionFormSheet({
           {contactExtraFields.map((ef) => (
             <IconInputRow
               key={ef.id}
+              name={`extra-${ef.id}`}
               icon={ef.icon}
               label={ef.label}
               value={ef.value}
@@ -897,6 +928,8 @@ export function ExhibitionFormSheet({
                 return (
                   <button
                     key={status}
+                    data-pdf-checkbox={`stallStatus-${status}`}
+                    data-pdf-checked={checked}
                     type="button"
                     onClick={() => toggleArrayItem('stallStatus', status)}
                     className="flex items-center group cursor-pointer focus:outline-none"
@@ -936,6 +969,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="bottomStallNo"
+              aria-label="bottomStallNo"
               value={values.bottomStallNo}
               onChange={(e) => onChangeValue('bottomStallNo', e.target.value)}
               readOnly={!interactive}
@@ -957,6 +992,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="stallPrice"
+              aria-label="stallPrice"
               value={values.stallPrice}
               onChange={(e) => onChangeValue('stallPrice', e.target.value)}
               readOnly={!interactive}
@@ -978,6 +1015,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="extraFacilities"
+              aria-label="extraFacilities"
               value={values.extraFacilities}
               onChange={(e) => onChangeValue('extraFacilities', e.target.value)}
               readOnly={!interactive}
@@ -999,6 +1038,8 @@ export function ExhibitionFormSheet({
             </div>
             <input
               type="text"
+              name="competitorRequest"
+              aria-label="competitorRequest"
               value={values.competitorRequest}
               onChange={(e) =>
                 onChangeValue('competitorRequest', e.target.value)
@@ -1012,6 +1053,7 @@ export function ExhibitionFormSheet({
           {otherExtraFields.map((ef) => (
             <IconInputRow
               key={ef.id}
+              name={`extra-${ef.id}`}
               icon={ef.icon}
               label={ef.label}
               value={ef.value}
@@ -1246,6 +1288,7 @@ export function FieldIconBadge({
 }
 
 interface IconInputRowProps {
+  name: string;
   icon: FieldIconName;
   label: string;
   value: string;
@@ -1260,6 +1303,7 @@ interface IconInputRowProps {
 }
 
 function IconInputRow({
+  name,
   icon,
   label,
   value,
@@ -1285,6 +1329,8 @@ function IconInputRow({
       </div>
       <input
         type="text"
+        name={name}
+        aria-label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         readOnly={!interactive}

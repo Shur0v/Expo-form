@@ -37,7 +37,7 @@ final result: passed
 
 ## Limits
 
-- Export remains a high-resolution rendered PDF, consistent with the existing download behavior; it does not create interactive AcroForm fields.
+- Barter agreement export remains a high-resolution rendered PDF; it does not create interactive AcroForm fields. Exhibition forms use the editable export described below.
 - Terms taller than an entire A4 page necessarily continue across pages; normal paragraphs and the signing block are kept together when they fit.
 - Original Myriad typefaces are approximated with a bundled condensed web font. Intentional compact spacing differs from the original unused ruled lines.
 
@@ -49,3 +49,13 @@ final result: passed
 - [x] PDF download and long-content pagination.
 - [x] Existing three-form editor and export regression checks.
 - [x] Revised browser/source comparison and PDF visual check.
+
+## Editable exhibition PDF follow-up
+
+- DTA and DIDMEE export 17 text fields and 10 independent checkboxes each; DCC exports 17 text fields and 6 checkboxes. Custom extra text fields and edited option lists are collected from the current rendered layout.
+- The combined download contains 77 standard editable fields on three A4 pages. Form names are scoped by exhibition so editing one page does not change another page.
+- Static design is captured with data values and ticks removed; live AcroForm widgets carry the values, preventing old content from remaining under cleared fields.
+- Full licensed Noto Sans font is embedded in appearances and the form's default resources. The license is shipped beside the font.
+- Downloaded blank and populated files were checked for canonical field-tree entries, writable flags, widget appearances, and checked/unchecked states. An independent save/reopen test changed text on all three pages and toggled both on/off checkbox states; all persisted.
+- Final PDF was rendered with PDFium before and after the save/reopen test. Labels, artwork, entered text, and changed ticks remain visible. Poppler's rendering of these transparent widgets is less reliable, so PDFium was used for final visual verification.
+- Recipients must use their PDF reader's Save, Save As, or Download with changes action before returning the file. Saving changes is controlled by the reader, not by the website once the file has been downloaded.

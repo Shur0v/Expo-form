@@ -541,6 +541,7 @@ export function ExhibitionWorkspace() {
             onClick={handlePrint}
             disabled={isExporting}
             aria-busy={isExporting}
+            title={isBarterActive ? 'Download the latest agreement as PDF' : 'Download a fillable PDF. Recipients can type, tick options, and save their completed copy in a PDF reader.'}
             className="px-4 py-2 text-xs font-bold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
           >
             <Printer className="w-3.5 h-3.5" />

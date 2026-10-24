@@ -8,6 +8,7 @@ export async function exportExhibitionPdf(sheets: HTMLElement[], filename: strin
   snapshot.setAttribute('aria-hidden', 'true');
   const copies = sheets.map((sheet) => {
     const copy = sheet.cloneNode(true) as HTMLElement;
+    copy.dataset.pdfFormId = sheet.dataset.exhibitionSheet;
     copy.removeAttribute('data-exhibition-sheet');
     const fields = sheet.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea');
     copy.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((field, i) => {
@@ -19,9 +20,10 @@ export async function exportExhibitionPdf(sheets: HTMLElement[], filename: strin
   document.body.appendChild(snapshot);
 
   try {
-    const [{ toCanvas }, { jsPDF }] = await Promise.all([
+    const [{ toCanvas }, { jsPDF }, { collectExhibitionPdfFields, addEditableExhibitionFields }] = await Promise.all([
       import('html-to-image'),
       import('jspdf'),
+      import('./fillable-exhibition-pdf'),
     ]);
     await document.fonts.ready;
     await Promise.all(copies.flatMap((sheet) =>
@@ -30,7 +32,11 @@ export async function exportExhibitionPdf(sheets: HTMLElement[], filename: strin
 
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
     let pageCount = 0;
+    const editablePages = [];
     for (const sheet of copies) {
+      if (sheet.dataset.pdfFlow !== 'true') {
+        editablePages.push(collectExhibitionPdfFields(sheet, pageCount));
+      }
       const canvas = await toCanvas(sheet, {
         pixelRatio: 3,
         backgroundColor: '#ffffff',
@@ -68,7 +74,17 @@ export async function exportExhibitionPdf(sheets: HTMLElement[], filename: strin
         pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297);
       }
     }
-    pdf.save(filename);
+    if (editablePages.length) {
+      const bytes = await addEditableExhibitionFields(pdf.output('arraybuffer'), editablePages);
+      const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } else {
+      pdf.save(filename);
+    }
   } finally {
     snapshot.remove();
   }
