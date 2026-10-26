@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useSyncExternalStore } from 'react';
+import dynamic from 'next/dynamic';
 import { flushSync } from 'react-dom';
 import { exportExhibitionPdf } from '@/lib/export-exhibition-pdf';
 import { Printer, RotateCcw } from 'lucide-react';
@@ -17,6 +18,11 @@ import { BarterAgreementEditor } from '@/components/BarterAgreementEditor';
 import { useBarterAgreement } from '@/hooks/use-barter-agreement';
 import './barter-agreement.css';
 
+const FloorplanPage = dynamic(() => import('@/components/floorplan'), {
+  ssr: false,
+  loading: () => <p role="status" className="p-8 text-sm text-slate-600">Loading floorplan…</p>,
+});
+
 const STORAGE_KEY_CONFIGS = 'ecoexpo_exhibitions_configs_v2';
 const STORAGE_KEY_VALUES = 'ecoexpo_exhibitions_values_v2';
 const STORAGE_KEY_UI = 'ecoexpo_exhibitions_ui_v2';
@@ -28,6 +34,10 @@ function subscribePage(listener: () => void) {
 
 function getBarterPageSnapshot() {
   return window.location.hash === '#barter-agreement';
+}
+
+function getFloorplanPageSnapshot() {
+  return window.location.hash === '#floorplan';
 }
 
 interface WorkspaceStoreState {
@@ -278,6 +288,7 @@ export function ExhibitionWorkspace() {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const isBarterActive = useSyncExternalStore(subscribePage, getBarterPageSnapshot, () => false);
+  const isFloorplanActive = useSyncExternalStore(subscribePage, getFloorplanPageSnapshot, () => false);
   const setIsBarterActive = (active: boolean) => {
     window.location.assign(active ? '#barter-agreement' : '#top');
   };
@@ -509,7 +520,7 @@ export function ExhibitionWorkspace() {
                 }));
               }}
               className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${
-                !isBarterActive && viewMode === 'single' && activeIndex === idx
+                !isBarterActive && !isFloorplanActive && viewMode === 'single' && activeIndex === idx
                   ? 'text-slate-900 border-slate-900'
                   : 'border-transparent'
               }`}
@@ -522,10 +533,15 @@ export function ExhibitionWorkspace() {
             className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${isBarterActive ? 'text-slate-900 border-slate-900' : 'border-transparent'}`}>
             Barter Agreement
           </button>
+          <button type="button" onClick={() => window.location.assign('#floorplan')}
+            aria-current={isFloorplanActive ? 'page' : undefined}
+            className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${isFloorplanActive ? 'text-slate-900 border-slate-900' : 'border-transparent'}`}>
+            Floorplan
+          </button>
         </nav>
 
         {/* Zone 3: Reset Default + Print / Export PDF Actions */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {!isFloorplanActive && <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={handleResetTopBar}
@@ -547,12 +563,14 @@ export function ExhibitionWorkspace() {
             <Printer className="w-3.5 h-3.5" />
             <span>{isExporting ? 'Preparing PDF…' : 'Print / Export PDF'}</span>
           </button>
-        </div>
+        </div>}
       </header>
       {exportError && <p role="alert" className="px-6 py-2 text-sm text-red-700 print:hidden">{exportError}</p>}
 
       {/* ==================== MAIN WORKSPACE AREA ==================== */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
+      {isFloorplanActive ? <main className="flex-1 w-full min-w-0 p-4 sm:p-8">
+        <FloorplanPage />
+      </main> : <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
         {/* Left/Center A4 Form Viewport */}
         <div className="w-full flex-1 flex flex-col items-center overflow-x-auto pb-8 print:pb-0 print:m-0 print:p-0 print:w-[210mm] print:block print:overflow-visible">
           {isBarterActive ? <BarterAgreementSheet agreement={agreement} onChange={updateAgreement} /> : viewMode === 'single' ? (
@@ -644,7 +662,7 @@ export function ExhibitionWorkspace() {
           onCopyValuesToAll={handleCopyValuesToAll}
           onResetCurrentTemplate={() => handleResetTemplate(activeIndex)}
         />}
-      </main>
+      </main>}
     </div>
   );
 }
