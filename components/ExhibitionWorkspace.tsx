@@ -496,7 +496,7 @@ export function ExhibitionWorkspace() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 print:min-h-0 print:bg-white print:block print:m-0 print:p-0">
       {/* ==================== TOP BAR (3-Zone Contract) ==================== */}
-      <header className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3.5 bg-white border-b border-slate-200 print:hidden">
+      <header data-studio-navigation className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3.5 bg-white border-b border-slate-200 print:hidden">
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#top"

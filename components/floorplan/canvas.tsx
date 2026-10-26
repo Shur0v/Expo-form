@@ -41,6 +41,7 @@ import {
   RotateCcw,
   Layers,
   Download,
+  FileCode2,
 } from "lucide-react";
 import type { Stall } from "@/lib/floorplan/types";
 import {
@@ -50,6 +51,7 @@ import {
   type MapObject,
 } from "@/lib/floorplan/floorplan";
 import styles from "./map.module.css";
+import chrome from "./chrome.module.css";
 import {
   mapTheme,
   mapPalette,
@@ -605,14 +607,14 @@ export default function FloorCanvas({
     >
       <style>{`[data-map-print]{display:none}@media print{html:has([data-map-print]),body:has([data-map-print]){width:auto!important;margin:0!important;padding:0!important}body:has([data-map-print])>*{display:none!important}body>[data-map-print]{display:block!important;position:static!important;color:#102a43!important;background:white!important;padding:8px;font:12px Arial} [data-map-print],[data-map-print] *{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important} [data-map-print] > div > svg{display:block;width:auto;height:auto;max-width:100%;max-height:85vh;overflow:hidden;margin:auto} [data-map-print] p{margin:5px 0} @page{size:landscape;margin:8mm}}`}</style>
       <div
-        className={styles.canvasToolbar}
+        className={chrome.toolbar}
         onClickCapture={(e) => {
           const button = (e.target as Element).closest("button");
           if (button && !button.hasAttribute("data-no-auto-expand"))
             workspace?.activity();
         }}
       >
-        <div>
+        {editing && <div>
           <strong>{g.layout.name}</strong>
           <span>
             {Math.round(zoom * 100)}% ·{" "}
@@ -620,29 +622,35 @@ export default function FloorCanvas({
               ? "Space + drag to pan · Drag stalls to edit · Shift to multi-select"
               : "Select stalls to build your exhibition space"}
           </span>
-        </div>
-        {toolbar}
-        <div className={styles.tools}>
-          <button
-            aria-label="Zoom in"
-            onClick={() => {
-              changeZoom(1.25);
-              workspace?.activity();
-            }}
-          >
-            <Plus size={17} />
-          </button>
+        </div>}
+        <div className={chrome.navigationStrip}>{toolbar}</div>
+        <div className={chrome.tools}>
+          <div className={chrome.zoomGroup}>
           <button
             aria-label="Zoom out"
+            title="Zoom out"
             onClick={() => {
               changeZoom(0.8);
               workspace?.activity();
             }}
           >
-            <Minus size={17} />
+            <Minus size={16} />
           </button>
+          <span className={chrome.zoomValue} aria-label="Zoom level">{Math.round(zoom * 100)}%</span>
+          <button
+            aria-label="Zoom in"
+            title="Zoom in"
+            onClick={() => {
+              changeZoom(1.25);
+              workspace?.activity();
+            }}
+          >
+            <Plus size={16} />
+          </button>
+          </div>
           <button
             aria-label="Fit entire hall"
+            title="Fit entire hall"
             onClick={() => {
               cameraMode.current = "focus";
               cameraFocus.current = frame;
@@ -656,28 +664,26 @@ export default function FloorCanvas({
           </button>
           <button
             aria-label={flat ? "Show 2.5D" : "Show 2D"}
+            title={flat ? "Show 2.5D" : "Show 2D"}
             onClick={() => setFlat(!flat)}
           >
             <Layers size={17} />
             {flat ? "Flat" : "2.5D"}
           </button>
-          <button
+          {!workspace?.expanded && <button
             data-no-auto-expand
-            aria-label={
-              workspace?.expanded ? "Back to dashboard" : "Expand map"
-            }
+            aria-label="Expand map"
+            title="Fullscreen"
             onClick={() =>
               workspace
-                ? workspace.expanded
-                  ? workspace.back()
-                  : workspace.expand()
+                ? workspace.expand()
                 : document.fullscreenElement
                   ? document.exitFullscreen()
                   : wrap.current?.requestFullscreen()
             }
           >
             <Maximize size={17} />
-          </button>
+          </button>}
           {editing && g.layout.referenceVersion && (
             <button aria-pressed={overlay} onClick={() => setOverlay(!overlay)}>
               Reference overlay
@@ -686,12 +692,16 @@ export default function FloorCanvas({
           <button
             data-no-auto-expand
             aria-label="Download SVG"
+            title="Download SVG"
             onClick={download}
           >
-            <Download size={17} />
+            <FileCode2 size={17} />
           </button>
           <button
             data-no-auto-expand
+            className={chrome.pdfButton}
+            aria-label="Print / PDF"
+            title="Download PDF"
             disabled={exportingPdf}
             aria-busy={exportingPdf}
             onClick={async () => {
@@ -713,7 +723,7 @@ export default function FloorCanvas({
               }
             }}
           >
-            Print / PDF
+            <Download size={15} /> PDF
           </button>
         </div>
       </div>

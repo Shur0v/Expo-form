@@ -1,5 +1,8 @@
 # Floorplan import and verification
 
+This records the original import baseline. The surrounding bars were subsequently
+redesigned at the user's request; see [the bar update and checks](floorplan-bars.md).
+
 Verified on 26 October 2026 using the current working-tree implementation of
 `C:\Users\Backtend\Music\ECO EXPO` at `/exhibitor/floor-plan`, run on port 3107.
 The reference was captured before modifying Form Studio. The source viewer was

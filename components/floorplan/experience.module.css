@@ -43,7 +43,9 @@
 .expanded .viewer {
   height: 100%;
   min-height: 0;
-  padding-top: 42px;
+  padding-top: 0;
+  border: 0;
+  border-radius: 0;
 }
 .viewer {
   height: clamp(460px, calc(100dvh - 240px), 1000px);
@@ -346,7 +348,7 @@
     display: none;
   }
   .expanded .viewer {
-    padding-top: 42px;
+    padding-top: 0;
   }
   .expanded[data-editor-workspace] aside {
     width: 85vw !important;

@@ -10,7 +10,6 @@ import {
   type CSSProperties,
 } from "react";
 import { mapCssVariables } from "@/lib/floorplan/map-colors";
-import { ArrowLeft } from "lucide-react";
 import styles from "./experience.module.css";
 const memory = new Map<string, number>();
 export function introduction(key: string, limit: number) {
@@ -97,9 +96,12 @@ export default function MapWorkspace({
           setExpanded(false);
           setStage("inline");
           setBox(undefined);
-          requestAnimationFrame(() =>
-            focus.current?.focus({ preventScroll: true }),
-          );
+          requestAnimationFrame(() => {
+            const target = focus.current?.isConnected
+              ? focus.current
+              : root.current?.querySelector<HTMLElement>('[aria-label="Expand map"]');
+            target?.focus({ preventScroll: true });
+          });
         },
         reduced ? 0 : 550,
       ),
@@ -186,7 +188,7 @@ export default function MapWorkspace({
       if (e.key === "Tab") {
         const controls = Array.from(
           root.current?.querySelectorAll<HTMLElement>(
-            'button:not(:disabled),select,input,a[href],[tabindex="0"]',
+            'button:not(:disabled),select,input,a[href],summary:not([tabindex="-1"]),[tabindex="0"]',
           ) || [],
         ).filter((el) => el.getBoundingClientRect().width > 0);
         const first = controls[0],
@@ -248,7 +250,7 @@ export default function MapWorkspace({
         reduced,
       }}
     >
-      <style>{`[data-dashboard-shell]>aside{transition:transform .3s ease,opacity .3s ease}[data-dashboard-shell][data-map-expanded=true]>aside{transform:translateX(-100%);opacity:0}[data-dashboard-shell][data-reduced-motion=true]>aside{transition:none}@media(prefers-reduced-motion:reduce){[data-dashboard-shell]>aside{transition:none}}`}</style>
+      <style>{`body:has([data-map-workspace][data-expanded=true]) [data-studio-navigation]{visibility:hidden;pointer-events:none}`}</style>
       <div
         style={expanded ? { height: placeholder } : undefined}
         className={styles.anchor}
@@ -274,16 +276,6 @@ export default function MapWorkspace({
             busy.current = false;
           }}
         >
-          {expanded && (
-            <button
-              data-map-back
-              className={styles.back}
-              onClick={back}
-              autoFocus
-            >
-              <ArrowLeft size={17} /> Back to dashboard
-            </button>
-          )}
           {children}
         </div>
       </div>

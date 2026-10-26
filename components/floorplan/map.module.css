@@ -475,6 +475,9 @@
   min-height: 0;
   height: 100%;
   color: #12304e;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 .responsiveCanvas .canvasToolbar {
   flex-shrink: 0;

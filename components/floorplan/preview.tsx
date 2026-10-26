@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import {
   AlignStartHorizontal,
@@ -13,6 +14,10 @@ import {
   AlignStartVertical,
   AlignCenterVertical,
   AlignEndVertical,
+  ArrowLeft,
+  Info,
+  MousePointer2,
+  Check,
 } from "lucide-react";
 import type { ViewProps } from "./context";
 import { visibleEditions, money } from "./context";
@@ -33,10 +38,26 @@ import {
 } from "@/lib/floorplan/map-experience";
 import { footprintArea, measuredLabel } from "@/lib/floorplan/map-geometry";
 import type { Stall } from "@/lib/floorplan/types";
-import MapWorkspace, { introduction } from "./workspace";
+import MapWorkspace, { introduction, useMapWorkspace } from "./workspace";
 import FloorCanvas from "./canvas";
 import styles from "./experience.module.css";
+import chrome from "./chrome.module.css";
 const sessionFallback = new Map<string, PreviewHold[]>();
+
+function PreviewHeader({ children }: { children: ReactNode }) {
+  const workspace = useMapWorkspace();
+  return <header className={chrome.header}>
+    <div className={chrome.previewIdentity}>
+      {workspace?.expanded && <button data-map-back data-no-auto-expand
+        className={chrome.headerBack} onClick={workspace.back} autoFocus>
+        <ArrowLeft size={16} /><span>Back</span>
+      </button>}
+      <strong>Design preview</strong>
+      <span className={chrome.simulationBadge} title="Simulated bookings only. No real booking or payment is created.">Simulation</span>
+    </div>
+    {children}
+  </header>;
+}
 export default function PreviewViewer({
   state: s,
   context: c,
@@ -74,15 +95,8 @@ export default function PreviewViewer({
     [target, setTarget] = useState<{ rect: SceneRect; token: number }>(),
     [highlight, setHighlight] = useState<string[]>([]),
     [intro, setIntro] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(true);
-  useEffect(() => {
-    const q = matchMedia("(max-width:700px)");
-    const update = () => setDetailsOpen(!q.matches);
-    update();
-    q.addEventListener("change", update);
-    return () => q.removeEventListener("change", update);
-  }, []);
   const appeared = useRef(false),
+    legendMenu = useRef<HTMLDetailsElement>(null),
     highlightTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
       undefined,
     );
@@ -206,25 +220,24 @@ export default function PreviewViewer({
   const toolbar = selected.length ? (
     <div
       aria-label="Selection alignment"
-      className={`${styles.nav} ${intro ? styles.intro : ""}`}
+      className={`${chrome.nav} ${intro ? styles.intro : ""}`}
       data-alignment-introduction={intro}
     >
       {alignmentControls.map(([axis, value, label, Icon], i) => (
         <button
           key={label}
           aria-label={label}
-          title={`${label} · 40 m viewing context`}
+          title={label}
           aria-pressed={aligned && alignment[axis] === value}
           style={{ "--order": 5 - i } as CSSProperties}
           onClick={() => align(axis, value)}
         >
           <Icon size={17} />
-          <span>{label}</span>
         </button>
       ))}
     </div>
   ) : (
-    <nav className={styles.nav} aria-label="Exhibition and pavilion navigation">
+    <nav className={chrome.nav} aria-label="Exhibition and pavilion navigation">
       {(["DTA", "DCC"] as const).map((name) => (
         <button
           key={name}
@@ -268,76 +281,58 @@ export default function PreviewViewer({
     setReview(false);
   };
   const legend = (
-    <div className={styles.legend}>
-      <b>Available · pavilion colors</b>
-      <b>Other pending · dotted</b>
-      <b>Other confirmed · outlined</b>
-      <b>Your selection / holds · dashed</b>
+    <div className={chrome.legend}>
+      <b>Available</b>
+      <b>Pending</b>
+      <b>Confirmed</b>
+      <b>Your selection / hold</b>
     </div>
   );
   const footer = (hover?: Stall) => {
     const st = hover || g.stalls.find((v) => v.id === inspected),
       booking = st && bookings.find((b) => b.stallIds.includes(st.id));
     return (
-      <footer className={styles.footer} data-map-footer>
-        <div aria-live="polite">
-          <strong>{st ? st.code : "Explore the exhibition"}</strong>
-          <p>
-            {st
-              ? `${measuredLabel(st)} · ${footprintArea(st).toFixed(2)} m² · ${booking ? (ownedIds.includes(st.id) ? "Your preview hold" : booking.status === "confirmed" ? "Confirmed" : "Pending verification") : "Available"}`
-              : "Drag to explore · Select adjoining stalls"}
-          </p>
-          {booking && (
-            <p>
-              {booking.company}
-              {booking.expiresAt
-                ? ` · expires ${new Date(booking.expiresAt).toLocaleTimeString()}`
-                : ""}
+      <footer className={chrome.footer} data-map-footer>
+        <div className={chrome.selectionSummary} aria-live="polite">
+          <span className={chrome.selectionIcon}>{selected.length ? <Check size={18} /> : <MousePointer2 size={18} />}</span>
+          <div>
+            <strong title={picked.map((st) => st.code).join(', ')}>{selected.length
+              ? `${selected.length} ${selected.length === 1 ? 'booth' : 'booths'} · ${area.toFixed(2)} m² · ${money(price, currency)}`
+              : 'Select booths to begin'}</strong>
+            <p title={booking ? `${booking.company}${booking.expiresAt ? ` · expires ${new Date(booking.expiresAt).toLocaleString()}` : ''}` : undefined}>
+              {st ? `${st.code} · ${measuredLabel(st)} · ${booking ? (ownedIds.includes(st.id) ? 'Your preview hold' : booking.status === 'confirmed' ? 'Confirmed' : 'Pending') : 'Available'}` : 'Select adjoining booths on the map'}
             </p>
-          )}
+          </div>
         </div>
-        <div>
-          <strong>
-            {selected.length
-              ? `${selected.length} stalls · ${area.toFixed(2)} m² · ${money(price, currency)}`
-              : "375 stalls · Design preview"}
-          </strong>
-          <details
-            open={detailsOpen}
-            onToggle={(e) => setDetailsOpen(e.currentTarget.open)}
-            className={styles.selectionDetails}
-          >
-            <summary className={styles.mobileSummary}>
-              Selection details and legend
-            </summary>
-            <div>
-              <p
-                className={styles.selectedCodes}
-                title={picked.map((st) => st.code).join(", ")}
-              >
-                {picked.map((st) => st.code).join(" · ") ||
-                  "Select available stalls to try a simulated hold."}
-              </p>
-              {legend}
-              {message && <p role="status">{message}</p>}
-            </div>
+        <div className={chrome.actions}>
+          <details ref={legendMenu} className={chrome.legendMenu}>
+            <summary aria-label="Map legend"><Info size={16} /><span>Legend</span></summary>
+            {legend}
           </details>
-        </div>
-        <div className={styles.actions}>
           <button
+            aria-label="Review selection"
             disabled={!selected.length}
-            onClick={() => setReview(!review)}
+            onClick={() => {
+              if (legendMenu.current) legendMenu.current.open = false;
+              setReview(!review);
+            }}
           >
-            Review selection
+            Review
           </button>
           <button
-            className={styles.hold}
+            className={chrome.hold}
+            aria-label="Hold stalls · preview"
+            title="Simulate a 24-hour hold"
             disabled={!selected.length || readOnly || loadedKey !== key}
-            onClick={hold}
+            onClick={() => {
+              if (legendMenu.current) legendMenu.current.open = false;
+              hold();
+            }}
           >
-            Hold stalls · preview
+            Hold booths
           </button>
         </div>
+        {message && <p className={chrome.feedback} role="status" title={message}>{message}</p>}
       </footer>
     );
   };
@@ -345,11 +340,8 @@ export default function PreviewViewer({
     return <p>No editions are available within your current permissions.</p>;
   return (
     <MapWorkspace accountId={c.accountId}>
-      <div className={styles.viewer}>
-        <div className={styles.previewBadge}>
-          <strong>Design preview · simulated bookings</strong>
-          <label>
-            Expo{" "}
+      <div className={`${styles.viewer} ${chrome.viewer}`}>
+        <PreviewHeader>
             <select
               aria-label="Preview expo"
               value={eid}
@@ -361,8 +353,7 @@ export default function PreviewViewer({
                 </option>
               ))}
             </select>
-          </label>
-        </div>
+        </PreviewHeader>
         <FloorCanvas
           geometry={g}
           bookings={bookings}
