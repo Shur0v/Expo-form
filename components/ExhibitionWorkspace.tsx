@@ -13,11 +13,7 @@ import {
 } from '@/lib/exhibition-data';
 import { ExhibitionFormSheet } from '@/components/ExhibitionFormSheet';
 import { FormCustomizerPanel } from '@/components/FormCustomizerPanel';
-import { BarterAgreementSheet } from '@/components/BarterAgreementSheet';
-import { BarterAgreementEditor } from '@/components/BarterAgreementEditor';
-import { useBarterAgreement } from '@/hooks/use-barter-agreement';
 import { StudioNavigation } from '@/components/StudioNavigation';
-import './barter-agreement.css';
 
 const FloorplanPage = dynamic(() => import('@/components/floorplan'), {
   ssr: false,
@@ -35,10 +31,6 @@ const STORAGE_KEY_UI = 'ecoexpo_exhibitions_ui_v2';
 function subscribePage(listener: () => void) {
   window.addEventListener('hashchange', listener);
   return () => window.removeEventListener('hashchange', listener);
-}
-
-function getBarterPageSnapshot() {
-  return window.location.hash === '#barter-agreement';
 }
 
 function getFloorplanPageSnapshot() {
@@ -295,14 +287,12 @@ export function ExhibitionWorkspace() {
   const [templateEditMode, setTemplateEditMode] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
-  const isBarterActive = useSyncExternalStore(subscribePage, getBarterPageSnapshot, () => false);
   const isFloorplanActive = useSyncExternalStore(subscribePage, getFloorplanPageSnapshot, () => false);
   const isOfferActive = useSyncExternalStore(subscribePage, getOfferPageSnapshot, () => false);
   const selectRegistrationForm = (index: number) => {
     window.location.assign('#top');
     updateWorkspaceStore(previous => ({ ...previous, activeIndex: index, viewMode: 'single' }));
   };
-  const { agreement, updateAgreement, resetDesign: resetBarterDesign } = useBarterAgreement();
 
   const activeConfig = exhibitions[activeIndex] || exhibitions[0];
 
@@ -446,10 +436,6 @@ export function ExhibitionWorkspace() {
   };
 
   const handleResetTopBar = () => {
-    if (isBarterActive) {
-      resetBarterDesign();
-      return;
-    }
     if (viewMode === 'all-three') {
       updateWorkspaceStore((prev) => ({
         ...prev,
@@ -493,7 +479,7 @@ export function ExhibitionWorkspace() {
     });
     try {
       const sheets = Array.from(document.querySelectorAll<HTMLElement>('[data-exhibition-sheet]'));
-      const name = isBarterActive ? 'ECO-Expo-Barter-Agreement' : viewMode === 'all-three' ? 'ECO-Expo-All-Forms' : activeConfig.id;
+      const name = viewMode === 'all-three' ? 'ECO-Expo-All-Forms' : activeConfig.id;
       await exportExhibitionPdf(sheets, `${name}.pdf`);
     } catch (error) {
       console.error('PDF export failed', error);
@@ -505,20 +491,20 @@ export function ExhibitionWorkspace() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white print:min-h-0 print:bg-white print:block print:m-0 print:p-0">
-      <StudioNavigation page={isFloorplanActive ? 'floorplan' : isOfferActive ? 'offer' : isBarterActive ? 'barter' : 'register'}
+      <StudioNavigation page={isFloorplanActive ? 'floorplan' : isOfferActive ? 'offer' : 'register'}
         exhibitions={exhibitions} activeIndex={activeIndex} onSelectForm={selectRegistrationForm} />
       {!isFloorplanActive && !isOfferActive && <div className="flex flex-wrap items-center justify-between gap-4 w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-4 border-b border-slate-100 print:hidden">
-        {isBarterActive ? <h1 className="text-sm font-semibold text-slate-700">Barter Agreement</h1> : <nav aria-label="Registration form templates" className="flex flex-wrap items-center gap-2">
+        <nav aria-label="Registration form templates" className="flex flex-wrap items-center gap-2">
           {exhibitions.map((exhibition, index) => <button key={exhibition.id} type="button" onClick={() => selectRegistrationForm(index)}
             aria-current={viewMode === 'single' && activeIndex === index ? 'page' : undefined}
             className={`px-4 py-2 rounded-full text-xs font-bold cursor-pointer ${viewMode === 'single' && activeIndex === index ? 'bg-sky-100 text-sky-700' : 'text-slate-500 hover:bg-slate-100'}`}>{exhibition.shortCode}</button>)}
-        </nav>}
+        </nav>
         <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={handleResetTopBar}
             className="px-3.5 py-2 text-xs font-bold text-black bg-white border border-black rounded-lg hover:bg-amber-100/80 transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
-            title={isBarterActive ? 'Restore the agreement title, logo, and text spacing while keeping entered details and terms' : 'Reset default colors, Balanced (-2px) field size, pictures, icons, and fields while keeping all written form data unchanged'}
+            title="Reset default colors, Balanced (-2px) field size, pictures, icons, and fields while keeping all written form data unchanged"
           >
             <RotateCcw className="w-3.5 h-3.5 text-black" />
             <span>Reset Default</span>
@@ -529,7 +515,7 @@ export function ExhibitionWorkspace() {
             onClick={handlePrint}
             disabled={isExporting}
             aria-busy={isExporting}
-            title={isBarterActive ? 'Download the latest agreement as PDF' : 'Download a fillable PDF. Recipients can type, tick options, and save their completed copy in a PDF reader.'}
+            title="Download a fillable PDF. Recipients can type, tick options, and save their completed copy in a PDF reader."
             className="px-4 py-2 text-xs font-bold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
           >
             <Printer className="w-3.5 h-3.5" />
@@ -547,7 +533,7 @@ export function ExhibitionWorkspace() {
       </main> : <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
         {/* Left/Center A4 Form Viewport */}
         <div className="w-full flex-1 flex flex-col items-center overflow-x-auto pb-8 print:pb-0 print:m-0 print:p-0 print:w-[210mm] print:block print:overflow-visible">
-          {isBarterActive ? <BarterAgreementSheet agreement={agreement} onChange={updateAgreement} /> : viewMode === 'single' ? (
+          {viewMode === 'single' ? (
             <div className="flex flex-col items-center print:block print:m-0 print:p-0 print:w-[210mm]">
               <ExhibitionFormSheet
                 config={activeConfig}
@@ -625,7 +611,7 @@ export function ExhibitionWorkspace() {
         </div>
 
         {/* Right Customizer Panel */}
-        {isBarterActive ? <BarterAgreementEditor agreement={agreement} onChange={updateAgreement} /> : <FormCustomizerPanel
+        <FormCustomizerPanel
           config={activeConfig}
           viewMode={viewMode}
           onChangeViewMode={setViewMode}
@@ -635,7 +621,7 @@ export function ExhibitionWorkspace() {
           onFillSampleData={() => handleFillSampleData(activeIndex)}
           onCopyValuesToAll={handleCopyValuesToAll}
           onResetCurrentTemplate={() => handleResetTemplate(activeIndex)}
-        />}
+        />
       </main>}
     </div>
   );

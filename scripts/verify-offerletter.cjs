@@ -178,9 +178,12 @@ async function main() {
       await download(page, `registration-${index + 1}.pdf`, () => clickText(page, 'Print / Export PDF'));
     }
     await fill(page, 'companyName', 'Registration QA Company', true);
-    await page.click('[aria-label="Studio pages"] a[href="#barter-agreement"]');
+    // Retired bookmarks fall back to registration; neither navigation exposes the removed page.
+    await page.evaluate(()=>{location.hash='#barter-agreement';});
     await page.waitForSelector('[data-exhibition-sheet]');
-    await download(page, 'barter-regression.pdf', () => clickText(page, 'Print / Export PDF'));
+    assert.equal(await page.$$eval('a[href="#barter-agreement"]',links=>links.length),0);
+    assert.equal(await page.$('[aria-label="Barter agreement preview"]'),null);
+    assert.equal(await page.$('[aria-label="Barter agreement editor"]'),null);
     await page.click('[aria-label="Studio pages"] a[href="#offer-letter"]');
     await page.waitForSelector('[data-offerletter]');
     await clickText(page, 'New offerletter');
@@ -197,7 +200,7 @@ async function main() {
     assert.equal(await page.$eval('[data-studio-navigation]', element => getComputedStyle(element).visibility), 'visible');
     assert.deepEqual(apiRequests, [], 'The independent studio made backend requests');
     assert.deepEqual(errors, [], 'Browser errors');
-    console.log('PASS offer editor, pricing, validation, save/reload, IndexedDB stamp, issue lock, QR, revoke, mobile navigation, registration/Barter/floorplan exports and fullscreen navigation.');
+    console.log('PASS offer editor, pricing, validation, save/reload, IndexedDB stamp, issue lock, QR, revoke, mobile navigation, retired page fallback, registration/floorplan exports and fullscreen navigation.');
     console.log('Evidence: ' + output);
   } catch (error) {
     if (page && !page.isClosed()) {

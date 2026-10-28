@@ -2,7 +2,7 @@
 
 Imported from `C:\Users\Backtend\Music\ECO EXPO` (`/admin/offerletter`). The original repository was left unchanged. The reference was run from a temporary copy with its demo data mode, using the source's dependencies.
 
-The surrounding navigation follows the supplied black bar, rounded tabs, active curved tab and hamburger menu. It contains the existing registration forms, Barter Agreement and Floor Map, plus Offer Letter. Client List and Exhibitor were excluded as requested. Registration template shortcuts remain available below the navigation and in its menu.
+The surrounding navigation follows the supplied black bar, rounded tabs, active curved tab and hamburger menu. It contains Registration Form, Offer Letter and Floor Map. Client List and Exhibitor were excluded as requested. Registration template shortcuts remain available below the navigation and in its menu. Barter Agreement was subsequently removed at the user's request, including its editor, styling, model, storage hook and dedicated assets. Old `#barter-agreement` bookmarks fall back to registration forms; the application no longer reads its old saved browser data.
 
 ## Source fidelity
 

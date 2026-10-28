@@ -5,7 +5,7 @@ import { Menu } from 'lucide-react';
 import type { ExhibitionConfig } from '@/lib/exhibition-data';
 import styles from './studio-navigation.module.css';
 
-type StudioPage = 'register' | 'barter' | 'offer' | 'floorplan';
+type StudioPage = 'register' | 'offer' | 'floorplan';
 export function StudioNavigation({ page, exhibitions, activeIndex, onSelectForm }: {
   page: StudioPage; exhibitions: ExhibitionConfig[]; activeIndex: number;
   onSelectForm: (index: number) => void;
@@ -30,7 +30,6 @@ export function StudioNavigation({ page, exhibitions, activeIndex, onSelectForm 
         {[
           ['register', '#top', 'Register form'],
           ['offer', '#offer-letter', 'Offer letter'],
-          ['barter', '#barter-agreement', 'Barter agreement'],
           ['floorplan', '#floorplan', 'Floor map'],
         ].map(([key, href, label]) => <a key={key} href={href}
           className={`${styles.tab} ${key === 'floorplan' ? styles.mapTab : ''}`}
@@ -45,7 +44,6 @@ export function StudioNavigation({ page, exhibitions, activeIndex, onSelectForm 
             onClick={() => { onSelectForm(index); close(); }}>{exhibition.shortCode}</button>)}
           <span className={styles.separator} />
           <a href="#offer-letter" onClick={close}>Offer letter</a>
-          <a href="#barter-agreement" onClick={close}>Barter agreement</a>
           <a href="#floorplan" onClick={close}>Floor map</a>
         </nav>
       </details>
