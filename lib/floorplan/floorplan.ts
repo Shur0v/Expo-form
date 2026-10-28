@@ -76,7 +76,7 @@ export interface MapObject {
 export interface FloorLayout {
   siteGates?: MapGate[];
   siteObstacles?: {hall:string;x:number;y:number;width:number;height:number}[];
-  siteArt?: {hall:string;kind?:string;d:string;fill:string;stroke:string;strokeWidth:number}[];
+  siteArt?: {hall:string;kind?:string;d:string;fill:string;stroke:string;strokeWidth:number;transform?:string}[];
   siteArtTransform?: string;
   siteSymbols?: {hall:string;kind:string;x:number;y:number;width:number;height:number;rotation:number}[];
   siteSigns?: {hall:string;x:number;y:number;label:string}[];

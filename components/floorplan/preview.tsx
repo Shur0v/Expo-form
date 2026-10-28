@@ -80,6 +80,8 @@ export default function PreviewViewer({
   const bitma = eid === BITMA_EDITION;
   const [bitmaHall,setBitmaHall]=useState('');
   const [areaSelection,setAreaSelection]=useState(false);
+  const openBitmaHall=(hall:string)=>{setBitmaHall(hall);setAreaSelection(false);setSelected([]);setReview(false);setInspected(undefined);setTarget(undefined);setHighlight([]);setMessage('');};
+  const openBitmaAllocation=(id:string)=>{const booth=bitmaSource.booths.find(item=>`bitma-${item.code}`===id);if(booth)openBitmaHall(booth.hall);};
   useEffect(()=>{if(!areaSelection)return;const cancel=(e:KeyboardEvent)=>{if(e.key==='Escape')setAreaSelection(false);};document.addEventListener('keydown',cancel);return()=>document.removeEventListener('keydown',cancel);},[areaSelection]);
   const allBitma=useMemo(()=>bitmaGeometry(),[]);
   const g = useMemo(() => eid === BITMA_EDITION ? bitmaGeometry(bitmaHall) : previewGeometry(eid), [eid,bitmaHall]),
@@ -243,7 +245,7 @@ export default function PreviewViewer({
       ))}
     </div>
   ) : bitma ? <nav className={chrome.nav} aria-label="BITMA hall navigation">
-    <select aria-label="BITMA hall" value={bitmaHall} onChange={e=>{setBitmaHall(e.target.value);setTarget(undefined);setHighlight([]);setInspected(undefined);setMessage('');
+    <select aria-label="BITMA hall" value={bitmaHall} onChange={e=>{openBitmaHall(e.target.value);
     }}><option value="">Campus overview</option>{bitmaSource.halls.map(h=><option key={h.id} value={h.id}>{h.name}</option>)}</select>
     <button aria-label="Select booth area" aria-pressed={areaSelection} onClick={()=>setAreaSelection(v=>!v)}>{areaSelection?'Drag to select':'Area select'}</button>
   </nav> : (
@@ -368,6 +370,8 @@ export default function PreviewViewer({
         <FloorCanvas
           key={g.hall.id}
           areaSelection={bitma&&areaSelection}
+          onHallOpen={bitma?openBitmaHall:undefined}
+          onOverviewStallOpen={bitma&&!bitmaHall?openBitmaAllocation:undefined}
           onAreaSelect={ids=>{const available=ids.filter(id=>!bookings.some(b=>b.stallIds.includes(id)));setSelected(available);setAreaSelection(false);setMessage(available.length?'Area selected · review before holding':'No available booths in this area');}}
           geometry={g}
           bookings={bookings}

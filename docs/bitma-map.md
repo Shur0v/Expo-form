@@ -1,6 +1,6 @@
 # BITMA 2027 interactive map
 
-BITMA 2027 is a separate option in Floor Map, alongside the existing DTA/DTG preview choices. The viewer reuses the existing camera, zoom, pan, 2D/2.5D surfaces, Gaussian shadows, review dialog, simulated holds, fullscreen transitions and export pipeline. A campus overview and nine source-oriented hall views share stable physical allocation IDs.
+BITMA 2027 is the default option in Floor Map, alongside the existing DTA/DCC preview. DTG 2027 is removed. The viewer reuses the existing camera, zoom, pan, 2D/2.5D surfaces, Gaussian shadows, review dialog, simulated holds, fullscreen transitions and export pipeline. A campus overview and nine source-oriented hall views share stable physical allocation IDs.
 
 ## Sources and calibration
 
@@ -20,7 +20,7 @@ The primary source is `BITMA Floor Plan 26.10.26.pdf` (two vector PDF pages). `@
 
 Every rentable width/height comes from printed booth dimensions, including 27 Hall 4 booths measuring 8 × 8 ft (2.4384 × 2.4384 m). Integer metre dimensions are not substituted for imperial booths. Unlabelled offsets are traced from calibrated vector positions; small Illustrator seam drift (at most 2 cm) is reconciled without resizing rentable footprints. These derived offsets are not surveyed engineering measurements.
 
-Campus spacing is explicitly illustrative. Each hall is calibrated independently, and campus distances are excluded from aisle measurements. The campus view turns the Hall 2/4/6 diagrams north-up according to their source compasses; individual views retain the PDF orientation. The confirmed internal hall dimensions and all booth areas survive those transforms unchanged.
+Campus spacing is explicitly illustrative. Each hall is calibrated independently, and campus distances are excluded from aisle measurements. The full-screen campus view follows the supplied blue ICCB site-plan arrangement, including its perimeter, parking areas, prayer room, ICCB office, inauguration/service hall, and entrance. Facility footprints and inter-hall gaps are visual estimates because no dimensioned site survey was supplied. Clicking a hall label or an open area within its outline opens the complete hall plan, fitted and centered. The campus view turns the Hall 2/4/6 diagrams north-up according to their source compasses; individual views retain the PDF orientation. The confirmed internal hall dimensions and all booth areas survive those transforms unchanged.
 
 ## Inventory and corrections
 

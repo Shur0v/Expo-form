@@ -69,6 +69,8 @@ import { allocationsInArea, pointInAllocation } from '@/lib/floorplan/map-select
 export interface CanvasProps {
   areaSelection?: boolean;
   onAreaSelect?: (ids:string[])=>void;
+  onHallOpen?: (hall:string)=>void;
+  onOverviewStallOpen?: (id:string)=>void;
   geometry: MapGeometry;
   bookings: MapBooking[];
   selected: string[];
@@ -227,6 +229,8 @@ export default function FloorCanvas({
   highlight = [],
   areaSelection = false,
   onAreaSelect,
+  onHallOpen,
+  onOverviewStallOpen,
 }: CanvasProps) {
   const sceneId = useId().replace(/:/g, "");
   const workspace = useMapWorkspace();
@@ -326,6 +330,7 @@ export default function FloorCanvas({
       ids: string[];
       distance?: number;
       item?: string;
+      hall?: string;
       resize?: string;
       dx: number;
       dy: number;
@@ -795,6 +800,7 @@ export default function FloorCanvas({
                     .closest("[data-item]")
                     ?.getAttribute("data-item") ||
                   (batched ? hit(pt) : undefined),
+              hall = (e.target as Element).closest("[data-bitma-hall-hit], [data-bitma-hall-open]")?.getAttribute("data-bitma-hall-hit") || (e.target as Element).closest("[data-bitma-hall-open]")?.getAttribute("data-bitma-hall-open") || undefined,
               ids =
                 id && editing
                   ? selected.includes(id) || selectedObjects.includes(id)
@@ -808,6 +814,7 @@ export default function FloorCanvas({
               camera,
               ids,
               item: id || undefined,
+              hall,
               resize: space.current
                 ? undefined
                 : (e.target as Element).getAttribute("data-resize") ||
@@ -901,13 +908,15 @@ export default function FloorCanvas({
                 else if (start.ids.length)
                   onMove?.(start.ids, start.dx, start.dy);
               } else if (start.item) {
-                if (g.layout.objects.some((o) => o.id === start.item))
+                if (!editing && g.layout.siteHalls && g.layout.siteHalls.length > 1 && zoom <= 1.3 && onOverviewStallOpen)
+                  onOverviewStallOpen(start.item);
+                else if (g.layout.objects.some((o) => o.id === start.item))
                   onObjectSelect?.(
                     start.item,
                     e.shiftKey || e.ctrlKey || e.metaKey,
                   );
                 else onSelect(start.item, e.shiftKey || e.ctrlKey || e.metaKey);
-              }
+              } else if (start.hall) onHallOpen?.(start.hall);
             }
             moved.current = true;
             gesture.current = null;
@@ -945,7 +954,7 @@ export default function FloorCanvas({
             />
           )}
           {preview && !g.layout.siteHalls && GardenArt({ layout: g.layout, id: sceneId })}
-          {g.layout.siteHalls ? <BitmaGrounds layout={g.layout} id={sceneId}/> : <HallBase
+          {g.layout.siteHalls ? <BitmaGrounds layout={g.layout} id={sceneId} onHallOpen={onHallOpen}/> : <HallBase
             width={g.layout.width}
             height={g.layout.height}
             id={sceneId}

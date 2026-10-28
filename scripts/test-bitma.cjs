@@ -1,7 +1,7 @@
 require('./floorplan-runtime.cjs');
 const assert=require('node:assert/strict');
 const clipping=require('polygon-clipping');
-const {bitmaGeometry,bitmaSource}=require('../lib/floorplan/bitma-layout.ts');
+const {bitmaGeometry,bitmaSource,BITMA_CAMPUS}=require('../lib/floorplan/bitma-layout.ts');
 const {corners,footprintArea,footprintPolygon,multiArea}=require('../lib/floorplan/map-geometry.ts');
 const {allocationsInArea,pointInAllocation}=require('../lib/floorplan/map-selection.ts');
 const {measuredGaps}=require('../lib/floorplan/map-dimensions.ts');
@@ -12,6 +12,17 @@ let count=0;
 const test=(name,fn)=>{fn();count++;console.log('PASS '+name)};
 const near=(a,b)=>assert(Math.abs(a-b)<1e-6,`${a} differs from ${b}`);
 const g=bitmaGeometry();
+test('campus locations follow the supplied site-plan order without altering source coordinates',()=>{
+ assert.equal(g.layout.width,430);assert.equal(g.layout.height,220);
+ for(const hall of bitmaSource.halls){
+  const site=g.layout.siteHalls.find(item=>item.id===hall.id),target=BITMA_CAMPUS.origins[hall.id];
+  assert.deepEqual({x:site.x,y:site.y},target);
+  for(const booth of bitmaSource.booths.filter(item=>item.hall===hall.id)){
+   const shown=g.stalls.find(item=>item.code===booth.code);
+   near(shown.x,booth.x+target.x-hall.x);near(shown.y,booth.y+target.y-hall.y);
+  }
+ }
+});
 test('all nine halls and 400 reviewed allocations are present',()=>{
  assert.equal(g.stalls.length,400);assert.equal(g.layout.siteHalls.length,9);
  const counts=Object.fromEntries(bitmaSource.halls.map(h=>[h.id,bitmaSource.booths.filter(b=>b.hall===h.id).length]));

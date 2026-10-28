@@ -36,17 +36,34 @@ function AmenityButton({x,y,width,height,title,lines,id}:{x:number;y:number;widt
 }
 
 /** Landscaping and wall elevations are visual; the floor rectangle is the metric boundary. */
-export function BitmaGrounds({layout,id,crop}:{layout:FloorLayout;id:string;crop?:SceneRect}) {
+export function BitmaGrounds({layout,id,crop,onHallOpen}:{layout:FloorLayout;id:string;crop?:SceneRect;onHallOpen?:(hall:string)=>void}) {
  const labelVisible=(x:number,y:number,text:string,size:number)=>!crop||
   (x-textWidth(text,size)/2>=crop.x&&x+textWidth(text,size)/2<=crop.x+crop.w&&y-size>=crop.y&&y+size<=crop.y+crop.h);
  return <g data-bitma-campus pointerEvents="none">
   <rect x="-5" y="-5" width={layout.width+10} height={layout.height+10} fill="#edf2f7"/>
   {(layout.siteHalls?.length||0)>1&&<>
+    <g data-bitma-campus-outline>
+      <path d="M-8 150H196V105H219V-8H305V43H365L407 82 376 112V132H430V198H-8Z" fill="#f8fafc" stroke="#aeb9df" strokeWidth="2.2" strokeLinejoin="round"/>
+      <path d="M-2 153H200V101H222V-3H301V47H363L401 82 371 116V137H425" fill="none" stroke="#d2d7ea" strokeWidth=".8" strokeDasharray="2 2"/>
+      <path d="M208 100V150M258 76H319M255 151H340M302 49V108M376 115V163" fill="none" stroke="#c7cbd2" strokeWidth="1.1" strokeDasharray="1 1.5"/>
+      <g fontFamily="Arial,sans-serif" fontWeight="700" textAnchor="middle">
+        <rect x="177" y="14" width="42" height="28" rx="1" fill="#e5e7eb"/><text x="204" y="30" fontSize="3.5" fill="#596579">PARKING</text>
+        <rect x="251" y="62" width="11" height="33" rx=".3" fill="#9ca3af"/><text x="256.5" y="80" fontSize="2.6" fill="#fff" transform="rotate(-90 256.5 80)">PRAYER ROOM</text>
+        <rect x="291" y="121" width="17" height="19" rx=".3" fill="#94a3b8"/><text x="299.5" y="130" fontSize="2.4" fill="#fff">ICCB</text><text x="299.5" y="134" fontSize="2" fill="#fff">OFFICE</text>
+        <rect x="248" y="157" width="14" height="39" rx=".3" fill="#9ca3af"/><text x="255" y="178" fontSize="2.2" fill="#fff" transform="rotate(-90 255 178)">INAUGURATION &amp; SERVICE HALL</text>
+        <rect x="390" y="132" width="25" height="17" rx=".5" fill="#e5e7eb"/><text x="406" y="142" fontSize="3" fill="#64748b">PARKING</text>
+        <rect x="317" y="91" width="24" height="12" rx=".5" fill="#e5e7eb"/><text x="334" y="98" fontSize="2.5" fill="#64748b">PARKING</text>
+      </g>
+      {[{x:180,y:22},{x:391,y:135},{x:319,y:93}].map((p,i)=><g key={i} transform={`translate(${p.x} ${p.y})`}><rect width="6" height="7" rx=".7" fill="#1682c4"/><text x="3" y="5.4" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="4.8" fontWeight="700" fill="#fff">P</text></g>)}
+      <g transform="translate(66 30)" aria-label="North"><circle r="5" fill="#fff" stroke="#9ca3af" strokeWidth=".8"/><path d="M0-2 1.5 3 0 2 -1.5 3Z" fill="#dc2626"/><text x="0" y="-7" textAnchor="middle" fontFamily="serif" fontSize="5" fill="#334155">N</text></g>
+      <g transform="translate(337 197)"><circle r="4" fill="#e2e8f0" stroke="#64748b" strokeWidth=".6"/><text x="0" y="1" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.8" fontWeight="700" fill="#475569">ENTRY</text></g>
+    </g>
     <text x="8" y="12" fontFamily="Arial,sans-serif" fontSize="6" fontWeight="700" fill="#102a43">BITMA 2027</text>
     <text x="8" y="18" fontFamily="Arial,sans-serif" fontSize="2.1" fill="#475569">ICCB · Bangladesh International Textile &amp; Apparel Machinery Exhibition</text>
     <text x="8" y="23" fontFamily="Arial,sans-serif" fontSize="1.6" fill="#64748b">Hall footprints to scale · campus gaps illustrative · north ↑</text>
   </>}
   {(layout.siteHalls||[]).map((h,i)=><g key={h.id} transform={`translate(${h.x} ${h.y})`} data-bitma-hall={h.id}>
+    {onHallOpen&&(layout.siteHalls?.length||0)>1&&<rect data-bitma-hall-hit={h.id} x="-1" y="-1" width={h.width+2} height={h.height+2} fill="transparent" pointerEvents="all" role="button" tabIndex={0} aria-label={`Open ${h.name} floor plan`} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onHallOpen(h.id);}}}/>}
     <title>{h.name} · {h.dimensionSource}</title>
     <defs><clipPath id={`${id}-gate-garden-${i}`}><path d={gardenGateClip(h,layout.siteGates||[])} clipRule="evenodd"/></clipPath></defs>
     <g clipPath={`url(#${id}-gate-garden-${i})`}>{GardenArt({layout:{...layout,width:h.width,height:h.height,objects:[]},id:`${id}-hall-${i}`})}</g>
@@ -58,11 +75,11 @@ export function BitmaGrounds({layout,id,crop}:{layout:FloorLayout;id:string;crop
       return <rect key={g.id} data-gate-approach={g.id} {...a} fill={mapTheme.scene.floor}/>;
     })}
     {wallSegments(h,layout.siteGates||[]).map((s,j)=><path key={j} data-hall-wall={h.id} d={s.side==='north'?`M${s.start} 0H${s.end}`:s.side==='south'?`M${s.start} ${h.height}H${s.end}`:s.side==='west'?`M0 ${s.start}V${s.end}`:`M${h.width} ${s.start}V${s.end}`} fill="none" stroke="#64748b" strokeWidth=".24"/>)}
-    {labelVisible(h.x+h.width/2,h.y-7,h.name+' · N →',2)&&<text x={h.width/2} y="-7" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="2" fontWeight="700" fill="#102a43">{h.name}{layout.siteHalls?.length===1?(h.northRotation?' · N →':' · N ↑'):''}</text>}
+    {labelVisible(h.x+h.width/2,h.y-7,h.name+' · N →',layout.siteHalls?.length===1?2:3.2)&&<text x={h.width/2} y="-7" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={layout.siteHalls?.length===1?2:3.2} fontWeight="700" fill="#102a43" pointerEvents={onHallOpen&&(layout.siteHalls?.length||0)>1?'all':'none'} role={onHallOpen&&(layout.siteHalls?.length||0)>1?'button':undefined} tabIndex={onHallOpen&&(layout.siteHalls?.length||0)>1?0:undefined} aria-label={onHallOpen&&(layout.siteHalls?.length||0)>1?`Open ${h.name} floor plan`:undefined} data-bitma-hall-open={onHallOpen&&(layout.siteHalls?.length||0)>1?h.id:undefined} style={onHallOpen&&(layout.siteHalls?.length||0)>1?{cursor:'pointer'}:undefined} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onHallOpen?.(h.id);}}}>{h.name}{layout.siteHalls?.length===1?(h.northRotation?' · N →':' · N ↑'):''}</text>}
     {labelVisible(h.x+h.width/2,h.y+h.height+5,`${h.width.toFixed(2)} × ${h.height.toFixed(2)} m`,1.2)&&<text x={h.width/2} y={h.height+5} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.2" fill="#475569">{h.width.toFixed(2)} × {h.height.toFixed(2)} m</text>}
   </g>)}
   <g data-source-architecture transform={layout.siteArtTransform}>
-   {layout.siteArt?.map((a,i)=><path key={i} data-bitma-stair-art={a.kind==='stairs'||undefined} transform={a.kind==='stairs'?'translate(0 .65)':undefined} d={a.d} fill={a.fill} stroke={a.stroke} strokeWidth={a.strokeWidth}/>)}
+   {layout.siteArt?.map((a,i)=><path key={i} data-bitma-stair-art={a.kind==='stairs'||undefined} transform={[a.transform,a.kind==='stairs'?'translate(0 .65)':undefined].filter(Boolean).join(' ')||undefined} d={a.d} fill={a.fill} stroke={a.stroke} strokeWidth={a.strokeWidth}/>)}
    {layout.siteSymbols?.filter(s=>s.kind==='cargo-entry').map(s=>CargoEntrySign({symbol:s}))}
   </g>
   {layout.siteSigns?.filter(s=>!['ENTRY','EXIT','FOOD','COURT','SERVICE','BOOTH'].includes(s.label)).map((s,i)=><g key={i} transform={`translate(${s.x} ${s.y})`}>
