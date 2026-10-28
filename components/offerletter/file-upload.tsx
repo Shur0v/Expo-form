@@ -1,0 +1,13 @@
+"use client";
+import {useEffect,useRef,useState,type ChangeEvent,type InputHTMLAttributes} from "react";
+import {API_MODE} from "@/lib/offerletter/mode";
+import {uploadAsset} from "@/lib/offerletter/media";
+/** Local selection preview only: the owning form decides when to save/upload. */
+export function FileUpload({showPreview=true,onUploaded,...props}:InputHTMLAttributes<HTMLInputElement>&{showPreview?:boolean;onUploaded?:(id:string)=>void}){
+ const [busy,setBusy]=useState(false),[error,setError]=useState('');
+ const [files,setFiles]=useState<File[]>([]);const ref=useRef<HTMLInputElement>(null),eventRef=useRef<ChangeEvent<HTMLInputElement>|null>(null);
+ const [urls,setUrls]=useState<string[]>([]);
+ useEffect(()=>{const form=ref.current?.closest('form');const block=(event:Event)=>{if(busy){event.preventDefault();event.stopPropagation();setError('Wait for the upload to finish before saving');}};form?.addEventListener('submit',block,true);return()=>form?.removeEventListener('submit',block,true);},[busy]);
+ useEffect(()=>{const next=files.map(f=>f.type.startsWith("image/")?URL.createObjectURL(f):"");queueMicrotask(()=>setUrls(next));return()=>next.forEach(url=>{if(url)URL.revokeObjectURL(url);});},[files]);
+ return <div className="space-y-3" data-upload-control><input {...props} ref={ref} type={props.type||"file"} disabled={props.disabled||busy} onChange={async e=>{eventRef.current=e;setFiles(Array.from(e.target.files||[]));if(API_MODE&&onUploaded){onUploaded("");const file=e.target.files?.[0];if(file){setBusy(true);setError("");try{onUploaded(await uploadAsset(file));}catch(error){setError(error instanceof Error?error.message:"Upload failed");}finally{setBusy(false);}}}else props.onChange?.(e);}}/>{busy&&<p role="status" className="text-sm">Uploading…</p>}{error&&<p role="alert" className="text-sm text-red-700">{error}</p>}{files.length>0&&showPreview&&<div className="grid gap-3 sm:grid-cols-2" data-upload-preview>{files.map((file,i)=><figure key={`${file.name}-${i}`} className="min-w-0 overflow-hidden rounded-xl border border-[#ebedf5] bg-[#f7f7fc]">{urls[i]&&<img src={urls[i]} alt={`Selected ${file.name}`} className="h-36 w-full object-contain p-2"/>}<figcaption className="truncate px-3 py-2 text-xs text-[#4b5d73]">{file.name} · {(file.size/1024).toFixed(0)} KB</figcaption></figure>)}</div>}{files.length>0&&showPreview&&!props.disabled&&<button type="button" className="text-xs font-medium text-[#6054dc]" onClick={()=>{if(ref.current)ref.current.value="";setFiles([]);if(API_MODE&&onUploaded)onUploaded("");else if(eventRef.current)props.onChange?.(eventRef.current);}}>Clear selection</button>}</div>;
+}

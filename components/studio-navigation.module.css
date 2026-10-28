@@ -1,0 +1,36 @@
+.header { position: relative; z-index: 40; width: 100%; background: #050505; color: white; }
+.inner { display: flex; align-items: center; gap: 40px; max-width: 1440px; min-height: 96px; margin: 0 auto; padding: 0 30px; }
+.tabs { display: flex; align-items: center; justify-content: center; align-self: stretch; gap: 28px; flex: 1; min-width: 0; padding: 0 28px; }
+.tab { position: relative; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0 23px; height: 52px; border-radius: 99px; background: white; color: #080808; text-decoration: none; font-size: 16px; font-weight: 800; line-height: 1.2; text-transform: uppercase; letter-spacing: -.45px; }
+.tab:hover { color: #078ac0; }
+.mapTab:not([aria-current]) { background: #28aed7; color: white; }
+.tab[aria-current="page"] { align-self: flex-end; height: 48px; padding-top: 2px; border-radius: 25px 25px 0 0; background: white; color: #008bc5; }
+.tab[aria-current="page"]::before, .tab[aria-current="page"]::after { content: ''; position: absolute; bottom: 0; width: 27px; height: 27px; pointer-events: none; }
+.tab[aria-current="page"]::before { left: -27px; background: radial-gradient(circle at 0 0, transparent 27px, white 27.6px); }
+.tab[aria-current="page"]::after { right: -27px; background: radial-gradient(circle at 100% 0, transparent 27px, white 27.6px); }
+.menu { position: relative; flex-shrink: 0; }
+.menu > summary { display: flex; align-items: center; justify-content: center; width: 43px; height: 43px; list-style: none; cursor: pointer; border-radius: 12px; background: white; color: #050505; }
+.menu > summary::-webkit-details-marker { display: none; }
+.dropdown { position: absolute; top: calc(100% + 15px); right: 0; display: grid; min-width: 235px; padding: 12px; background: white; color: #203448; border: 1px solid #e7ebf0; border-radius: 14px; box-shadow: 0 12px 36px #0002; }
+.dropdown a, .dropdown button { display: block; text-align: left; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; }
+.dropdown a:hover, .dropdown button:hover, .dropdown button[aria-current] { background: #edf7fc; color: #008bc5; }
+.menuTitle { padding: 6px 12px; font-size: 10px; font-weight: 700; color: #77899b; text-transform: uppercase; letter-spacing: .8px; }
+.separator { height: 1px; margin: 8px 10px; background: #e7ebf0; }
+.header a:focus-visible, .header button:focus-visible, .header summary:focus-visible { outline: 3px solid #28aed7; outline-offset: 4px; }
+@media (max-width: 1050px) {
+  .inner { padding: 0 20px; gap: 22px; }
+  .tabs { gap: 20px; padding: 0 10px; }
+  .tab { padding: 0 16px; font-size: 13px; height: 47px; }
+}
+@media (max-width: 700px) {
+  .inner { padding: 0 12px; min-height: 78px; gap: 12px; }
+  .tabs { justify-content: flex-start; overflow-x: auto; gap: 12px; padding: 0 14px; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { font-size: 11px; height: 39px; padding: 0 13px; }
+  .tab[aria-current="page"] { height: 40px; border-radius: 16px 16px 0 0; }
+  .tab[aria-current="page"]::before, .tab[aria-current="page"]::after { width: 13px; height: 13px; }
+  .tab[aria-current="page"]::before { left: -13px; background: radial-gradient(circle at 0 0, transparent 13px, white 13.6px); }
+  .tab[aria-current="page"]::after { right: -13px; background: radial-gradient(circle at 100% 0, transparent 13px, white 13.6px); }
+  .menu > summary { width: 36px; height: 36px; border-radius: 10px; }
+}
+@media print { .header { display: none !important; } }

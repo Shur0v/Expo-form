@@ -1,0 +1,13 @@
+.offer-workspace { min-width: 0; width: 100%; color: #102a43; font-size: 16px; font-weight: 500; line-height: 1.625; }
+.offer-workspace button, .offer-workspace input, .offer-workspace select { font-family: inherit; }
+/* Match the source shell's overflow containment around the scaled A4 sheet. */
+@media screen {
+  html:has([data-offerletter]), body:has([data-offerletter]) { overflow-x: hidden; max-width: 100vw; }
+}
+/* Source offer printing: isolate the A4 sheet from the editor and studio menu. */
+@media print {
+  body:has([data-offerletter]) { margin: 0 !important; padding: 0 !important; }
+  body:has([data-offerletter]) *:not(:has([data-offerletter])):not([data-offerletter]):not([data-offerletter] *) { display: none !important; }
+  body:has([data-offerletter]) *:has([data-offerletter]) { position: static !important; display: block !important; overflow: visible !important; height: auto !important; max-height: none !important; width: auto !important; max-width: none !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; transform: none !important; background: transparent !important; }
+  body [data-offerletter] { position: relative !important; margin: 0 !important; transform: none !important; box-shadow: none !important; }
+}

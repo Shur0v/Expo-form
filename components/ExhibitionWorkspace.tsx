@@ -16,11 +16,16 @@ import { FormCustomizerPanel } from '@/components/FormCustomizerPanel';
 import { BarterAgreementSheet } from '@/components/BarterAgreementSheet';
 import { BarterAgreementEditor } from '@/components/BarterAgreementEditor';
 import { useBarterAgreement } from '@/hooks/use-barter-agreement';
+import { StudioNavigation } from '@/components/StudioNavigation';
 import './barter-agreement.css';
 
 const FloorplanPage = dynamic(() => import('@/components/floorplan'), {
   ssr: false,
   loading: () => <p role="status" className="p-8 text-sm text-slate-600">Loading floorplan…</p>,
+});
+const OfferletterPage = dynamic(() => import('@/components/offerletter'), {
+  ssr: false,
+  loading: () => <p role="status" className="p-8 text-sm text-slate-600">Loading offer letters…</p>,
 });
 
 const STORAGE_KEY_CONFIGS = 'ecoexpo_exhibitions_configs_v2';
@@ -38,6 +43,9 @@ function getBarterPageSnapshot() {
 
 function getFloorplanPageSnapshot() {
   return window.location.hash === '#floorplan';
+}
+function getOfferPageSnapshot() {
+  return ['#offer-letter', '#offerletter'].includes(window.location.hash);
 }
 
 interface WorkspaceStoreState {
@@ -289,8 +297,10 @@ export function ExhibitionWorkspace() {
   const [exportError, setExportError] = useState<string | null>(null);
   const isBarterActive = useSyncExternalStore(subscribePage, getBarterPageSnapshot, () => false);
   const isFloorplanActive = useSyncExternalStore(subscribePage, getFloorplanPageSnapshot, () => false);
-  const setIsBarterActive = (active: boolean) => {
-    window.location.assign(active ? '#barter-agreement' : '#top');
+  const isOfferActive = useSyncExternalStore(subscribePage, getOfferPageSnapshot, () => false);
+  const selectRegistrationForm = (index: number) => {
+    window.location.assign('#top');
+    updateWorkspaceStore(previous => ({ ...previous, activeIndex: index, viewMode: 'single' }));
   };
   const { agreement, updateAgreement, resetDesign: resetBarterDesign } = useBarterAgreement();
 
@@ -494,54 +504,16 @@ export function ExhibitionWorkspace() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 print:min-h-0 print:bg-white print:block print:m-0 print:p-0">
-      {/* ==================== TOP BAR (3-Zone Contract) ==================== */}
-      <header data-studio-navigation className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-x-8 gap-y-3 px-6 py-3.5 bg-white border-b border-slate-200 print:hidden">
-        {/* Zone 1: Single text element wordmark */}
-        <a
-          href="#top"
-          className="text-lg font-extrabold tracking-tight text-slate-900 whitespace-nowrap shrink-0"
-        >
-          EcoExpo Form Studio
-        </a>
-
-        {/* Zone 2: 3 concise single-line text navigation links */}
-        <nav className="flex order-3 w-full lg:order-none lg:w-auto items-center gap-6 text-sm font-semibold text-slate-600 overflow-x-auto">
-          {exhibitions.map((expo, idx) => (
-            <button
-              key={expo.id}
-              type="button"
-              onClick={() => {
-                setIsBarterActive(false);
-                updateWorkspaceStore((prev) => ({
-                  ...prev,
-                  activeIndex: idx,
-                  viewMode: 'single',
-                }));
-              }}
-              className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${
-                !isBarterActive && !isFloorplanActive && viewMode === 'single' && activeIndex === idx
-                  ? 'text-slate-900 border-slate-900'
-                  : 'border-transparent'
-              }`}
-            >
-              {expo.shortCode}
-            </button>
-          ))}
-          <button type="button" onClick={() => setIsBarterActive(true)}
-            aria-current={isBarterActive ? 'page' : undefined}
-            className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${isBarterActive ? 'text-slate-900 border-slate-900' : 'border-transparent'}`}>
-            Barter Agreement
-          </button>
-          <button type="button" onClick={() => window.location.assign('#floorplan')}
-            aria-current={isFloorplanActive ? 'page' : undefined}
-            className={`hover:text-slate-900 transition-colors whitespace-nowrap shrink-0 cursor-pointer pb-0.5 border-b-2 ${isFloorplanActive ? 'text-slate-900 border-slate-900' : 'border-transparent'}`}>
-            Floorplan
-          </button>
-        </nav>
-
-        {/* Zone 3: Reset Default + Print / Export PDF Actions */}
-        {!isFloorplanActive && <div className="flex items-center gap-2.5 shrink-0">
+    <div className="min-h-screen flex flex-col bg-white print:min-h-0 print:bg-white print:block print:m-0 print:p-0">
+      <StudioNavigation page={isFloorplanActive ? 'floorplan' : isOfferActive ? 'offer' : isBarterActive ? 'barter' : 'register'}
+        exhibitions={exhibitions} activeIndex={activeIndex} onSelectForm={selectRegistrationForm} />
+      {!isFloorplanActive && !isOfferActive && <div className="flex flex-wrap items-center justify-between gap-4 w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-4 border-b border-slate-100 print:hidden">
+        {isBarterActive ? <h1 className="text-sm font-semibold text-slate-700">Barter Agreement</h1> : <nav aria-label="Registration form templates" className="flex flex-wrap items-center gap-2">
+          {exhibitions.map((exhibition, index) => <button key={exhibition.id} type="button" onClick={() => selectRegistrationForm(index)}
+            aria-current={viewMode === 'single' && activeIndex === index ? 'page' : undefined}
+            className={`px-4 py-2 rounded-full text-xs font-bold cursor-pointer ${viewMode === 'single' && activeIndex === index ? 'bg-sky-100 text-sky-700' : 'text-slate-500 hover:bg-slate-100'}`}>{exhibition.shortCode}</button>)}
+        </nav>}
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             type="button"
             onClick={handleResetTopBar}
@@ -563,12 +535,14 @@ export function ExhibitionWorkspace() {
             <Printer className="w-3.5 h-3.5" />
             <span>{isExporting ? 'Preparing PDF…' : 'Print / Export PDF'}</span>
           </button>
-        </div>}
-      </header>
+        </div>
+      </div>}
       {exportError && <p role="alert" className="px-6 py-2 text-sm text-red-700 print:hidden">{exportError}</p>}
 
       {/* ==================== MAIN WORKSPACE AREA ==================== */}
-      {isFloorplanActive ? <main className="flex-1 w-full min-w-0 p-4 sm:p-8">
+      {isOfferActive ? <main className="flex-1 w-full max-w-[1600px] mx-auto p-4 sm:p-8 bg-[#f7f7fc] mt-6 mb-8">
+        <OfferletterPage exhibitions={exhibitions} />
+      </main> : isFloorplanActive ? <main className="flex-1 w-full min-w-0 p-4 sm:p-8">
         <FloorplanPage />
       </main> : <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 flex flex-col lg:flex-row items-start justify-center gap-6 print:p-0 print:m-0 print:max-w-none print:w-[210mm] print:block">
         {/* Left/Center A4 Form Viewport */}
