@@ -7,7 +7,7 @@ const {allocationsInArea,pointInAllocation}=require('../lib/floorplan/map-select
 const {measuredGaps}=require('../lib/floorplan/map-dimensions.ts');
 const {joinedEdges}=require('../lib/floorplan/map-structure.ts');
 const {validPreviewHolds,previewHoldKey}=require('../lib/floorplan/map-experience.ts');
-const {gateSpan,wallSegments,gateApproach}=require('../lib/floorplan/map-gates.ts');
+const {gateSpan,wallSegments,gateApproach,gateBadge,gateBadgeAngle,gateBadgeFontSize}=require('../lib/floorplan/map-gates.ts');
 let count=0;
 const test=(name,fn)=>{fn();count++;console.log('PASS '+name)};
 const near=(a,b)=>assert(Math.abs(a-b)<1e-6,`${a} differs from ${b}`);
@@ -63,6 +63,55 @@ test('campus and hall orientation keep every gate opening clear of walls and gar
     for(const wall of walls.filter(w=>w.side===span.side))assert(Math.min(wall.end,span.end)-Math.max(wall.start,span.start)<1e-6,gate.id+' blocked by wall');
    }
   }
+ }
+});
+test('entry, exit and cargo badges are aligned, readable and fully outside rentable hall space',()=>{
+ for(const scope of ['',...bitmaSource.halls.map(h=>h.id)]){
+  const layout=bitmaGeometry(scope).layout;
+  for(const g0 of layout.siteGates.filter(g=>['entry','exit','fire-exit','cargo'].includes(g.kind))){
+   const h=layout.siteHalls.find(item=>item.id===g0.hall),g=g0,b=gateBadge(h,g),span=gateSpan(h,g);
+   if(span.side==='north'){assert(b.y+b.height< h.y);near(b.x,h.x+span.start);near(b.width,span.end-span.start);}
+   if(span.side==='south'){assert(b.y>h.y+h.height);near(b.x,h.x+span.start);near(b.width,span.end-span.start);}
+   if(span.side==='west'){assert(b.x+b.width<h.x);near(b.y,h.y+span.start);near(b.height,span.end-span.start);}
+   if(span.side==='east'){assert(b.x>h.x+h.width);near(b.y,h.y+span.start);near(b.height,span.end-span.start);}
+   assert(gateBadgeFontSize(g)>0&&gateBadgeFontSize(g)<=.62);
+   assert.equal(gateBadgeAngle(g.side),g.side==='north'||g.side==='south'?0:-90);
+   for(const st of bitmaGeometry(scope).stalls.filter(item=>item.groupId===`bitma-hall-${g.hall}`))
+    assert(b.x+b.width<=st.x+1e-6||b.x>=st.x+st.width-1e-6||b.y+b.height<=st.y+1e-6||b.y>=st.y+st.height-1e-6,`${g.id} badge overlaps ${st.code}`);
+  }
+ }
+});
+test('cargo signs reproduce the reference triangle at each source hall without touching the heading',()=>{
+ assert.equal(bitmaSource.symbols.length,4);
+ for(const symbol of bitmaSource.symbols){
+  assert.equal(symbol.kind,'cargo-entry');
+  const h=bitmaSource.halls.find(item=>item.id===symbol.hall);assert(h);
+  const rotated=symbol.rotation!==0,halfH=(rotated?symbol.width:symbol.height)/2;
+  assert(symbol.y-halfH>h.y-6,`${symbol.hall} cargo sign touches the hall heading`);
+  assert(symbol.width>=5&&symbol.height>=3.5,'Cargo sign lost its label space');
+ }
+});
+test('food court and service booth buttons stay on the landscaped edge and away from booths',()=>{
+ for(const id of ['2','3','4']){
+  const map=bitmaGeometry(id),h=map.layout.siteHalls[0],signs=map.layout.siteSigns;
+  for(const labels of [['FOOD','COURT'],['SERVICE','BOOTH']]){
+   const pair=signs.filter(s=>s.hall===id&&labels.includes(s.label));assert.equal(pair.length,2);
+   const center=pair.reduce((sum,s)=>sum+s.y,0)/pair.length;
+   const box={x:h.x-2.85,y:center-1.225,width:2.5,height:2.45};
+   assert(box.x>=h.x-3&&box.x+box.width<h.x,'amenity button is outside or over the hall');
+   for(const st of map.stalls)assert(box.x+box.width<=st.x+1e-6||box.x>=st.x+st.width-1e-6||box.y+box.height<=st.y+1e-6||box.y>=st.y+st.height-1e-6,`${id} amenity button overlaps ${st.code}`);
+  }
+ }
+});
+test('stair artwork is identified and offset down from its source position',()=>{
+ assert(bitmaSource.art.some(a=>a.kind==='stairs'));
+ for(const id of ['1','2','3','4']){
+  const obstacle=bitmaGeometry(id).layout.siteObstacles[0];
+  const original=bitmaSource.obstacles.find(o=>o.hall===id);
+  const h=bitmaGeometry(id).layout.siteHalls[0];
+  const campus=bitmaSource.halls.find(item=>item.id===id);
+  const expected=h.northRotation?original.x-campus.x:original.y-campus.y;
+  near(obstacle.y,expected+.65);
  }
 });
 test('every allocation has a unique stable physical identity',()=>{

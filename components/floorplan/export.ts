@@ -31,6 +31,7 @@ import { referenceFrame } from "@/lib/floorplan/reference-layout";
 import { SceneDefs, HallBase, FeatureArt, ShadowArt } from "./architecture";
 import { BitmaGrounds } from './bitma-grounds';
 import { BitmaLabels } from './bitma-labels';
+import { BitmaGateMarkers } from './bitma-gate-markers';
 import { faceColor, surfacePaint } from "./presentation";
 import { textColor } from "@/lib/floorplan/map-colors";
 import ReferenceDetails from "./reference-details";
@@ -366,5 +367,6 @@ export function exportMap(
   }
   if(g.layout.siteHalls)artwork(BitmaLabels({stalls:stocks}),root);
   artwork(CompanyArt({ bookings, preview: options.preview }), root);
+  if(g.layout.siteHalls)artwork(BitmaGateMarkers({layout:g.layout}),root);
   return new XMLSerializer().serializeToString(root);
 }

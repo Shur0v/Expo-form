@@ -64,6 +64,7 @@ import { referenceFrame } from "@/lib/floorplan/reference-layout";
 import { SceneDefs, HallBase, FeatureArt, ShadowArt } from "./architecture";
 import { BitmaGrounds } from './bitma-grounds';
 import { BitmaLabels } from './bitma-labels';
+import { BitmaGateMarkers } from './bitma-gate-markers';
 import { allocationsInArea, pointInAllocation } from '@/lib/floorplan/map-selection';
 export interface CanvasProps {
   areaSelection?: boolean;
@@ -1150,6 +1151,7 @@ export default function FloorCanvas({
             </g>
           )}
           {g.layout.siteHalls&&<BitmaLabels stalls={visible.map(v=>v.st)}/>}
+          {g.layout.siteHalls&&<BitmaGateMarkers layout={g.layout}/>}
           {searchMatches && (
             <path
               data-search-results="true"

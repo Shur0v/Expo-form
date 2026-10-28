@@ -45,8 +45,13 @@ async function main(){
   await download(page,'bitma-campus.svg',()=>page.click('[aria-label="Download SVG"]'));
   const svg=fs.readFileSync(path.join(output,'bitma-campus.svg'),'utf8');
   assert(svg.includes('data-bitma-campus'));assert(svg.includes('filter='));
+  assert.equal((svg.match(/data-amenity-button=/g)||[]).length,6,'SVG omitted the food and service buttons');
+  assert.equal((svg.match(/data-bitma-stair-art=/g)||[]).length,81,'SVG lost the lowered stair artwork');
   assert.equal((svg.match(/data-map-garden=/g)||[]).length,9,'Export lost a hall garden band');
+  assert.equal((svg.match(/data-cargo-symbol=/g)||[]).length,4,'SVG omitted the calibrated cargo signs');
+  assert(svg.includes('CARGO')&&svg.includes('ENTRY'),'SVG cargo sign text is incomplete');
   assert.equal((svg.match(/data-map-gate=/g)||[]).length,41,'SVG omitted a PDF gate');
+  assert.equal((svg.match(/data-gate-badge="true"/g)||[]).length,28,'SVG omitted a public, cargo or fire-exit badge');
   assert.equal((svg.match(/data-gate-approach=/g)||[]).length,41,'SVG blocked a gate approach');
   assert(svg.includes('clip-rule="evenodd"'),'SVG lost garden gate openings');
   for(const st of bitmaGeometry().stalls)assert(svg.includes(st.code),'SVG omitted '+st.code);
@@ -56,6 +61,13 @@ async function main(){
    const expected=bitmaGeometry(id).layout.siteGates;
    const actual=await page.$$eval('[data-live-map] [data-map-gate]',nodes=>nodes.map(n=>({id:n.getAttribute('data-map-gate'),kind:n.getAttribute('data-gate-kind'),side:n.getAttribute('data-gate-side')})));
    assert.deepEqual(actual,expected.map(g=>({id:g.id,kind:g.kind,side:g.side})),`Hall ${id} gates differ from the PDF inventory`);
+   assert.equal(await page.$$eval('[data-live-map] [data-gate-badge]',nodes=>nodes.length),expected.filter(g=>['entry','exit','fire-exit','cargo'].includes(g.kind)).length);
+   assert.equal(await page.$$eval('[data-live-map] [data-amenity-button]',nodes=>nodes.length),['2','3','4'].includes(id)?2:0,`Hall ${id} amenity buttons are missing or misplaced`);
+   assert.equal(await page.$$eval('[data-live-map] [data-bitma-stair-art]',nodes=>nodes.length),bitmaGeometry(id).layout.siteArt.filter(a=>a.kind==='stairs').length,`Hall ${id} stair shape was not kept visible`);
+   assert(await page.$eval('[data-live-map]',svg=>{
+    const badge=svg.querySelector('[data-gate-badge]'),booths=[...svg.querySelectorAll('[data-item]')];
+    return !badge||!booths.length||!!(booths.at(-1).compareDocumentPosition(badge)&Node.DOCUMENT_POSITION_FOLLOWING);
+   }),'Gate labels must be drawn above booth surfaces');
    await page.screenshot({path:path.join(output,`hall-${id}.png`),fullPage:true});
   }
   await page.select('[aria-label="BITMA hall"]','4');await page.waitForSelector('[data-live-map][data-stall-count="62"]');await delay(400);

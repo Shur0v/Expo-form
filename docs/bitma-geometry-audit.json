@@ -522,7 +522,7 @@
       "reason": "Prefix corrected to the hall heading, per user instruction."
     }
   ],
-  "architectureVectorPaths": 379,
+  "architectureVectorPaths": 137,
   "nonRentableStairRegions": [
     {
       "hall": "1",

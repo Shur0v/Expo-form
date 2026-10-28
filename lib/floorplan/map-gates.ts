@@ -28,6 +28,20 @@ export function gateApproach(h:HallRect,g:MapGate){
  if(s.side==='west')return{x:-4,y:s.start,width:5,height:span};
  return{x:h.width-1,y:s.start,width:5,height:span};
 }
+/** Label plates sit just beyond the hall line, centred on the measured opening. */
+export function gateBadge(h:HallRect,g:MapGate){
+ const span=gateSpan(h,g),depth=Math.min(1,Math.max(.78,Math.min(g.width,g.height)));
+ if(span.side==='north')return{x:h.x+span.start,y:h.y-depth-.06,width:span.end-span.start,height:depth};
+ if(span.side==='south')return{x:h.x+span.start,y:h.y+h.height+.06,width:span.end-span.start,height:depth};
+ if(span.side==='west')return{x:h.x-depth-.06,y:h.y+span.start,width:depth,height:span.end-span.start};
+ return{x:h.x+h.width+.06,y:h.y+span.start,width:depth,height:span.end-span.start};
+}
+/** Keep text upright and consistently oriented on matching edges. */
+export function gateBadgeAngle(side:GateSide){return side==='west'||side==='east'?-90:0;}
+export function gateBadgeFontSize(g:MapGate){
+ const span=Math.max(g.width,g.height),depth=Math.max(.78,Math.min(g.width,g.height));
+ return Math.min(.62,depth*.68,span/(g.label.length*.56));
+}
 const rectPath=(x:number,y:number,w:number,h:number)=>`M${x} ${y}h${w}v${h}h${-w}Z`;
 export function gardenGateClip(h:HallRect,gates:MapGate[]){
  return rectPath(-5,-5,h.width+10,h.height+10)+gates.filter(g=>g.hall===h.id).map(g=>{

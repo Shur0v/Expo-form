@@ -48,7 +48,7 @@ An allocation can contain a printed code range. Merged ranges stay as a single p
 
 The map uses the existing pastel colour families, exposed-edge extrusion and soft shadows. Original marketing-page backgrounds and poster headings are replaced by the current map's viewer design, as requested. Native PDF AC/access/service annotations are carried over as source signs; no new physical dimensions are assigned to them.
 
-Stair drawings, roof WC icons and orange access plates/lettering are extracted as original vector paths in their calibrated positions. Clipped source paths with detached off-region control points are excluded. This is architectural artwork, not new rentable allocations. The same artwork and source-oriented transforms are used in the screen, SVG and PDF exports.
+Stair drawings and roof WC icons are extracted as original vector paths in their calibrated positions. Clipped source paths with detached off-region control points are excluded. Orange entry/exit gates are rendered from their audited opening geometry; gate labels and the cargo signs use clean vector artwork. This is architectural artwork, not new rentable allocations. The same artwork and source-oriented transforms are used in the screen, SVG and PDF exports.
 
 Stair regions are excluded from clear-aisle calculations, so dimension arrows do not describe a route through the source stair artwork. These non-rentable extents follow the drawing; no rentable booth is resized around them.
 
@@ -78,12 +78,14 @@ PDF export reuses the current high-resolution pipeline that preserves the blurre
 ## Verification record (28 October 2026)
 
 - Production build and TypeScript passed.
-- 72 domain checks passed: 18 BITMA geometry/selection/hold checks, 24 existing map checks and 30 Offer Letter checks.
+- 79 domain checks passed: 25 BITMA geometry/selection/hold checks, 24 existing map checks and 30 Offer Letter checks.
 - The isolated production-browser run passed all nine hall views, 400 SVG allocation labels, keyboard selection, pan/zoom, soft area selection, review/clear, 24-hour holds, cross-hall/reload persistence, expiry, occupied-hold handling, concave-notch hit testing, shared corridor labels, 2D/2.5D, fullscreen/back and mobile layout.
 - Four actual download controls produced one-page landscape A3 PDFs: campus, selected Hall 4 booths, selected Hall 1 composite and Hall 4A. Poppler renders were inspected for shadows, source artwork, garden bands, selection colours, labels and clipping. Export now serializes the garden component and suppresses partly clipped hall headings in selection crops.
 - Existing registration/Offer Letter browser regression passed. Registration PDFs retain their 28/24/28 fillable fields. The existing DTA/DCC map and export controls passed too. No original-source API requests or browser runtime errors occurred.
 - Changed-source lint has zero errors and seven existing imported-camera hook warnings. The remaining existing Offer Letter image warnings are unchanged.
 
+Gate and amenity presentation was refined afterwards: the cargo-entry triangle has a clean vector forklift, all gates render above the booth faces, Food Court and Service Booth markers use matching outlined buttons, and the lower-left stair artwork is shifted down 0.65 m. Updated campus, Hall 3/4, selection, review and mobile evidence is saved in `docs/bitma-evidence/`.
+
 Final screenshots and PDF-render evidence are saved in `docs/bitma-evidence/`. The machine-readable dimension/area/correction audit is `docs/bitma-geometry-audit.json`. Generated test PDFs remain under ignored `tmp/`.
 
-The subsequent complete gate audit, including public doors, fire exits, cargo gates, service doors and unlabelled access openings, is recorded in [bitma-gates.md](bitma-gates.md). All 41 openings have shared screen/export geometry and wall/garden interruptions. BITMA now has 21 domain checks.
+The subsequent complete gate audit, including public doors, fire exits, cargo gates, service doors and unlabelled access openings, is recorded in [bitma-gates.md](bitma-gates.md). All 41 openings have shared screen/export geometry and wall/garden interruptions. BITMA now has 25 domain checks.

@@ -133,17 +133,13 @@ with pdfplumber.open(sys.argv[1]) as pdf:
   page=pdf.pages[s['page']-1];x0,y0,x1,y1=s['box'];sx=s['w']/(x1-x0);sy=s['h']/(y1-y0)
   def local(q):return ((q['x0']-x0)*sx,(q['top']-y0)*sy,(q['x1']-x0)*sx,(q['bottom']-y0)*sy)
   regions=[]
-  if hid in ['1','2','3']:regions.append((0,18,7,22.55))
-  if hid=='4':regions.append((2,24.4,10.2,28.0416))
+  if hid in ['1','2','3']:regions.append((0,18,7,22.55,'stairs'))
+  if hid=='4':regions.append((2,24.4,10.2,28.0416,'stairs'))
   for q in page.rects+page.curves:
    a,b,c,d=local(q);col=q.get('non_stroking_color');w=c-a;h=d-b
    # Source WC icon circles above the wall, not inferred amenities.
-   if hid in ['1','2','3','4'] and q.get('fill') and col and len(col)==4 and col[3]>.6 and -1<a<s['w'] and c<s['w']+1 and -4<b<0 and .5<w<3 and .5<h<3 and .5<w/h<2:
-    regions.append((a-.04,b-.04,c+.04,d+.04))
-   # Exact orange entry/exit plates; copy their white vector lettering too.
-   if q.get('fill') and col and len(col)==4 and col[0]<.02 and .45<col[1]<.55 and col[2]>.85 and .2<w<5 and .2<h<5:
-    cx=(a+c)/2;cy=(b+d)/2
-    if -.8<cx<s['w']+.8 and -.8<cy<s['h']+.8 and min(abs(cx),abs(cx-s['w']),abs(cy),abs(cy-s['h']))<.8:regions.append((a-.04,b-.04,c+.04,d+.04))
+   if hid in ['1','2','3','4'] and q.get('fill') and col and len(col)==4 and col[3]>.6 and -1<a<s['w'] and c<s['w']+1 and -4<b<0 and 2.6<w<3.3 and 2.6<h<3.3 and .9<w/h<1.1:
+    regions.append((a-.04,b-.04,c+.04,d+.04,'wc'))
   seen=set()
   for q in page.rects+page.curves+page.lines:
    a,b,c,d=local(q)
@@ -153,7 +149,7 @@ with pdfplumber.open(sys.argv[1]) as pdf:
    # Some Illustrator clipped curves carry off-region control points in their
    # underlying path. Never export those detached glyph fragments as campus art.
    vertices=[((px-x0)*sx,(py-y0)*sy) for command in commands for px,py in command[1:]]
-   if not any(all(rx-.5<=px<=rr+.5 and ry-.5<=py<=rb+.5 for px,py in vertices) for rx,ry,rr,rb in matched):continue
+   if not any(all(rx-.5<=px<=rr+.5 and ry-.5<=py<=rb+.5 for px,py in vertices) for rx,ry,rr,rb,_ in matched):continue
    parts=[]
    for command in commands:
     op=command[0];parts.append('Z' if op=='h' else op.upper())
@@ -161,11 +157,25 @@ with pdfplumber.open(sys.argv[1]) as pdf:
      xx=(px-x0)*sx;yy=(py-y0)*sy
      if s['rotate']:xx,yy=yy,s['w']-xx
      parts.append(f'{xx+s["x"]:.6f},{yy+s["y"]:.6f}')
-   item=dict(hall=hid,d=' '.join(parts),fill=rgb(q.get('non_stroking_color')) if q.get('fill') else 'none',
+   item=dict(hall=hid,kind='stairs' if any(r[4]=='stairs' for r in matched) else 'architecture',d=' '.join(parts),fill=rgb(q.get('non_stroking_color')) if q.get('fill') else 'none',
              stroke=rgb(q.get('stroking_color')) if q.get('stroke') or q.get('object_type')=='line' else 'none',strokeWidth=round((q.get('linewidth') or .15)*(sx+sy)/2,5))
    key=(item['d'],item['fill'],item['stroke'])
    if key not in seen:seen.add(key);art.append(item)
-out=dict(version='bitma-2027-pdf-2026-10-26-v1',sourceSha256=inventory['sha256'],halls=halls,booths=booths,signs=signs,art=art,obstacles=obstacles,gates=gates,
+symbols=[]
+with pdfplumber.open(sys.argv[1]) as pdf:
+ for hid,s in specs.items():
+  if hid not in ['1','2','3','4']:continue
+  page=pdf.pages[s['page']-1];x0,y0,x1,y1=s['box'];sx=s['w']/(x1-x0);sy=s['h']/(y1-y0)
+  for q in page.rects+page.curves:
+   col=q.get('non_stroking_color')
+   if not(q.get('fill') and col and len(col)==4 and col[0]<.1 and .1<col[1]<.25 and col[2]>.9 and col[3]<.1):continue
+   a,b,c,d=((q['x0']-x0)*sx,(q['top']-y0)*sy,(q['x1']-x0)*sx,(q['bottom']-y0)*sy)
+   if not(-1<a<s['w']+1 and c<s['w']+1 and -5<b<0 and 3<c-a<4 and 2.5<d-b<3.5 and -1.5<d<0):continue
+   cx,cy=(a+c)/2,(b+d)/2;rotation=0
+   if s['rotate']:cx,cy=cy,s['w']-cx;rotation=-90
+   symbols.append(dict(hall=hid,kind='cargo-entry',x=round(cx+s['x'],6),y=round(cy+s['y'],6),width=5.5,height=4.0,rotation=rotation))
+   break
+out=dict(version='bitma-2027-pdf-2026-10-26-v1',sourceSha256=inventory['sha256'],halls=halls,booths=booths,signs=signs,art=art,symbols=symbols,obstacles=obstacles,gates=gates,
          notes=['Campus spacing is illustrative and estimated; hall dimensions and rentable footprints are independent.',
                 'Hall 1/2 prefixes corrected to headings. Merged allocation ranges remain single selectable footprints.',
                 'PDF colours and labels are a source snapshot, not live occupancy. No booth prices were supplied.'])
