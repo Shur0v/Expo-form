@@ -17,6 +17,7 @@ export const standaloneFloorplan: ViewProps = {
     editions: [
       { id: 'dta-2026', series: 'DTA', year: 2026, status: 'sales-open', currency: 'USD' },
       { id: 'dtg-2027', series: 'DTG', year: 2027, status: 'preparation', currency: 'USD' },
+      { id: 'bitma-2027', series: 'BITMA', year: 2027, status: 'preparation', currency: 'USD' },
     ],
     policy: { holdHours: 24 },
   },

@@ -29,6 +29,8 @@ import { sceneBounds, type SceneRect } from "@/lib/floorplan/map-experience";
 import { GardenArt, ExhibitionWash } from "./garden";
 import { referenceFrame } from "@/lib/floorplan/reference-layout";
 import { SceneDefs, HallBase, FeatureArt, ShadowArt } from "./architecture";
+import { BitmaGrounds } from './bitma-grounds';
+import { BitmaLabels } from './bitma-labels';
 import { faceColor, surfacePaint } from "./presentation";
 import { textColor } from "@/lib/floorplan/map-colors";
 import ReferenceDetails from "./reference-details";
@@ -148,10 +150,10 @@ export function exportMap(
         fill: "url(#export-reference-background)",
       }),
     );
-  if (options.preview)
+  if (options.preview && !g.layout.siteHalls)
     artwork(GardenArt({ layout: g.layout, id: "export" }), root);
   artwork(
-    HallBase({
+    g.layout.siteHalls ? BitmaGrounds({layout:g.layout,id:'export',crop:options.crop}) : HallBase({
       width: g.layout.width,
       height: g.layout.height,
       id: "export",
@@ -362,6 +364,7 @@ export function exportMap(
     );
     root.append(group);
   }
+  if(g.layout.siteHalls)artwork(BitmaLabels({stalls:stocks}),root);
   artwork(CompanyArt({ bookings, preview: options.preview }), root);
   return new XMLSerializer().serializeToString(root);
 }

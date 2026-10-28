@@ -62,7 +62,12 @@ import { faceColor, surfacePaint } from "./presentation";
 import ReferenceDetails from "./reference-details";
 import { referenceFrame } from "@/lib/floorplan/reference-layout";
 import { SceneDefs, HallBase, FeatureArt, ShadowArt } from "./architecture";
+import { BitmaGrounds } from './bitma-grounds';
+import { BitmaLabels } from './bitma-labels';
+import { allocationsInArea, pointInAllocation } from '@/lib/floorplan/map-selection';
 export interface CanvasProps {
+  areaSelection?: boolean;
+  onAreaSelect?: (ids:string[])=>void;
   geometry: MapGeometry;
   bookings: MapBooking[];
   selected: string[];
@@ -111,7 +116,7 @@ const Booth = memo(function Booth({
       fontFamily={reference ? "Arial,sans-serif" : undefined}
       role="button"
       tabIndex={0}
-      aria-label={`${st.code}, ${status}, ${st.width} by ${st.height} metres`}
+      aria-label={`${st.code}, ${status}, ${st.footprintPoints?`${st.dimensionLabel}, ${footprintArea(st)} square metres`:`${st.width} by ${st.height} metres`}`}
       transform={`translate(${st.x} ${st.y}) rotate(${st.rotation})`}
       onClick={(e) => {
         e.stopPropagation();
@@ -219,12 +224,14 @@ export default function FloorCanvas({
   focus,
   target,
   highlight = [],
+  areaSelection = false,
+  onAreaSelect,
 }: CanvasProps) {
   const sceneId = useId().replace(/:/g, "");
   const workspace = useMapWorkspace();
   const frame = sceneBounds(g.layout);
-  const cameraMode = useRef<"free" | "cover" | "focus">("free"),
-    cameraFocus = useRef<SceneRect | undefined>(undefined);
+  const cameraMode = useRef<"free" | "cover" | "focus">(g.layout.siteHalls?'focus':"free"),
+    cameraFocus = useRef<SceneRect | undefined>(g.layout.siteHalls?frame:undefined);
   const scene = useRef<HTMLDivElement>(null),
     size = useRef({ width: 1, height: 1 }),
     inlineCamera = useRef<SceneRect | undefined>(undefined),
@@ -242,6 +249,9 @@ export default function FloorCanvas({
       : st;
   };
   const [overlay, setOverlay] = useState(false);
+  const [marquee,setMarquee]=useState<SceneRect>();
+  const marqueeStart=useRef<{x:number;y:number;pointerId:number}|undefined>(undefined);
+  useEffect(()=>{if(!areaSelection){marqueeStart.current=undefined;setMarquee(undefined);}},[areaSelection]);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [pdfError, setPdfError] = useState('');
   const svg = useRef<SVGSVGElement>(null),
@@ -356,7 +366,7 @@ export default function FloorCanvas({
       ? `${g.stalls
           .filter((st) => selected.includes(st.id))
           .map((st) => st.code)
-          .join(", ")} · ${selected.length} stalls · ${g.stalls
+          .join(", ")} · ${selected.length} ${g.layout.siteHalls?'allocations':'stalls'} · ${g.stalls
           .filter((st) => selected.includes(st.id))
           .reduce((n, st) => n + footprintArea(st), 0)
           .toFixed(2)} m²`
@@ -428,9 +438,10 @@ export default function FloorCanvas({
   useEffect(() => {
     if (workspace?.expanded && !wasExpanded.current) {
       inlineCamera.current = cameraRef.current;
-      cameraMode.current = "cover";
+      cameraMode.current = g.layout.siteHalls ? 'focus' : "cover";
+      if(g.layout.siteHalls)cameraFocus.current=frame;
       setCamera(
-        fitScene(frame, size.current.width, size.current.height, "cover"),
+        fitScene(frame, size.current.width, size.current.height, g.layout.siteHalls ? 'contain' : "cover"),
       );
     }
     if (!workspace?.expanded && wasExpanded.current && inlineCamera.current) {
@@ -582,7 +593,7 @@ export default function FloorCanvas({
         dy = pt.y - v.st.y,
         x = dx * Math.cos(r) - dy * Math.sin(r),
         y = dx * Math.sin(r) + dy * Math.cos(r);
-      return x >= 0 && x <= v.st.width && y >= 0 && y <= v.st.height;
+      return x >= 0 && x <= v.st.width && y >= 0 && y <= v.st.height && (!v.st.footprintPoints||pointInAllocation(v.st,pt));
     })?.st.id;
 
   const download = async () => {
@@ -766,6 +777,11 @@ export default function FloorCanvas({
           }}
           onPointerDown={(e) => {
             if (e.button !== 0) return;
+            if(areaSelection){
+              moved.current=false;
+              const p=point(e.clientX,e.clientY);marqueeStart.current={x:p.x,y:p.y,pointerId:e.pointerId};
+              setMarquee({x:p.x,y:p.y,w:0,h:0});svg.current?.setPointerCapture(e.pointerId);workspace?.start();return;
+            }
             cameraMode.current = "free";
             workspace?.start();
             svg.current?.setPointerCapture(e.pointerId);
@@ -805,6 +821,10 @@ export default function FloorCanvas({
             }
           }}
           onPointerMove={(e) => {
+            if(marqueeStart.current?.pointerId===e.pointerId){
+              const a=marqueeStart.current,p=point(e.clientX,e.clientY);
+              setMarquee({x:Math.min(a.x,p.x),y:Math.min(a.y,p.y),w:Math.abs(p.x-a.x),h:Math.abs(p.y-a.y)});return;
+            }
             if (!gesture.current || !pointers.current.has(e.pointerId)) {
               if (e.pointerType !== "touch")
                 setHovered(hit(point(e.clientX, e.clientY)));
@@ -863,6 +883,11 @@ export default function FloorCanvas({
             }
           }}
           onPointerUp={(e) => {
+            if(marqueeStart.current?.pointerId===e.pointerId){
+              const a=marqueeStart.current,p=point(e.clientX,e.clientY);
+              onAreaSelect?.(allocationsInArea(g.stalls,{x:Math.min(a.x,p.x),y:Math.min(a.y,p.y),w:Math.abs(p.x-a.x),h:Math.abs(p.y-a.y)}));
+              marqueeStart.current=undefined;setMarquee(undefined);moved.current=true;workspace?.activity();return;
+            }
             const start = gesture.current;
             setDragging(false);
             pointers.current.delete(e.pointerId);
@@ -897,6 +922,7 @@ export default function FloorCanvas({
             setHovered(undefined);
           }}
           onPointerCancel={() => {
+            marqueeStart.current=undefined;setMarquee(undefined);
             workspace?.cancel();
             pointers.current.clear();
             setDragging(false);
@@ -917,13 +943,13 @@ export default function FloorCanvas({
               pointerEvents="none"
             />
           )}
-          {preview && GardenArt({ layout: g.layout, id: sceneId })}
-          <HallBase
+          {preview && !g.layout.siteHalls && GardenArt({ layout: g.layout, id: sceneId })}
+          {g.layout.siteHalls ? <BitmaGrounds layout={g.layout} id={sceneId}/> : <HallBase
             width={g.layout.width}
             height={g.layout.height}
             id={sceneId}
             reference={!!g.layout.referenceVersion}
-          />
+          />}
           {g.layout.referenceVersion &&
             g.layout.objects
               .filter(
@@ -1007,7 +1033,7 @@ export default function FloorCanvas({
               className={styles.batch}
               role="button"
               tabIndex={0}
-              aria-label={`${g.stalls.length} stalls. Arrow keys browse stalls; Enter selects ${g.stalls[focusIndex]?.code || "a stall"}. Details appear in the footer.`}
+              aria-label={`${g.stalls.length} ${g.layout.siteHalls?'allocations':'stalls'}. Arrow keys browse stalls; Enter selects ${g.stalls[focusIndex]?.code || "a stall"}. Details appear in the footer.`}
               onKeyDown={(e) => {
                 if (
                   ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(
@@ -1123,6 +1149,7 @@ export default function FloorCanvas({
               ))}
             </g>
           )}
+          {g.layout.siteHalls&&<BitmaLabels stalls={visible.map(v=>v.st)}/>}
           {searchMatches && (
             <path
               data-search-results="true"
@@ -1214,7 +1241,8 @@ export default function FloorCanvas({
               pointerEvents="none"
             />
           )}
-          {!g.layout.referenceVersion &&
+          {marquee&&<rect data-area-selection x={marquee.x} y={marquee.y} width={marquee.w} height={marquee.h} fill="#93c5fd" fillOpacity=".24" stroke="#3b82f6" strokeWidth=".1" strokeDasharray=".4 .2" pointerEvents="none"/>}
+          {!g.layout.referenceVersion && !g.layout.siteHalls &&
             Array.from({ length: Math.floor(g.layout.width / 5) }, (_, i) => (
               <text
                 key={i}

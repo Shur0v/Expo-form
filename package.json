@@ -10,7 +10,9 @@
     "test:floorplan": "node scripts/test-floorplan.cjs && node scripts/test-floorplan-colors.cjs",
     "test:offerletter": "node scripts/test-offerletter.cjs",
     "test:offerletter:browser": "node scripts/verify-offerletter.cjs",
-    "clean": "next clean"
+    "clean": "next clean",
+    "test:bitma": "node scripts/test-bitma.cjs",
+    "test:bitma:browser": "node scripts/verify-bitma.cjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -75,6 +75,9 @@ export interface Zone {
   backup: number;
 }
 export interface Stall {
+  /** Local metric polygon for composite BITMA allocations; rectangles omit it. */
+  footprintPoints?: { x: number; y: number }[];
+  sourceLabel?: string;
   categoryZoneId?: string;
   /** Printed reference annotation, independent of booking ownership. */
   displayLabel?: string;

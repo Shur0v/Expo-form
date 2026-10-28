@@ -70,6 +70,19 @@ export function measuredGaps(
   stalls: Stall[],
   areas: PavilionArea[] = [],
 ) {
+  if (layout.siteHalls) return layout.siteHalls.flatMap(h=>{
+    const local=stalls.filter(st=>st.zone===h.name).map(st=>({...st,x:st.x-h.x,y:st.y-h.y,
+      groupId:`${h.id}-${Math.round((st.x-h.x)*1000)}`}));
+    const corridors = new Map<string,GapDimension>();
+    const objects=(layout.siteObstacles||[]).filter(o=>o.hall===h.id).map((o,i)=>({...o,id:`nonrentable-${h.id}-${i}`,kind:'facility' as const,x:o.x-h.x,y:o.y-h.y,rotation:0,label:'',color:'#e2e8f0',locked:true,nonRentable:true}));
+    for(const d of measuredGaps({...layout,siteHalls:undefined,width:h.width,height:h.height,objects,floorBoundary:undefined},local)) {
+      const key=`${d.axis}|${d.a.toFixed(2)}|${d.b.toFixed(2)}`;
+      if(!corridors.has(key))corridors.set(key,d);
+    }
+    return [...corridors.values()].map(d=>({...d,
+      a:d.a+(d.axis==='x'?h.x:h.y),b:d.b+(d.axis==='x'?h.x:h.y),at:d.at+(d.axis==='x'?h.y:h.x),
+      box:{...d.box,x:d.box.x+h.x,y:d.box.y+h.y}}));
+  });
   const stocks = stalls.filter((s) => s.placed),
     floor = (
       layout.floorBoundary || [

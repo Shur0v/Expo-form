@@ -42,6 +42,7 @@ import MapWorkspace, { introduction, useMapWorkspace } from "./workspace";
 import FloorCanvas from "./canvas";
 import styles from "./experience.module.css";
 import chrome from "./chrome.module.css";
+import { BITMA_EDITION, bitmaGeometry, bitmaSource } from '@/lib/floorplan/bitma-layout';
 const sessionFallback = new Map<string, PreviewHold[]>();
 
 function PreviewHeader({ children }: { children: ReactNode }) {
@@ -76,8 +77,13 @@ export default function PreviewViewer({
   );
   const [edition, setEdition] = useState(""),
     eid = editions.find((e) => e.id === edition)?.id || editions[0]?.id || "";
-  const g = useMemo(() => previewGeometry(eid), [eid]),
-    examples = useMemo(() => previewExamples(g.stalls), [g.stalls]),
+  const bitma = eid === BITMA_EDITION;
+  const [bitmaHall,setBitmaHall]=useState('');
+  const [areaSelection,setAreaSelection]=useState(false);
+  useEffect(()=>{if(!areaSelection)return;const cancel=(e:KeyboardEvent)=>{if(e.key==='Escape')setAreaSelection(false);};document.addEventListener('keydown',cancel);return()=>document.removeEventListener('keydown',cancel);},[areaSelection]);
+  const allBitma=useMemo(()=>bitmaGeometry(),[]);
+  const g = useMemo(() => eid === BITMA_EDITION ? bitmaGeometry(bitmaHall) : previewGeometry(eid), [eid,bitmaHall]),
+    examples = useMemo(() => bitma ? [] : previewExamples(g.stalls), [g.stalls,bitma]),
     blocked = useMemo(
       () => new Set(examples.flatMap((b) => b.stallIds)),
       [examples],
@@ -100,16 +106,16 @@ export default function PreviewViewer({
     highlightTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
       undefined,
     );
-  const key = previewHoldKey(c.accountId);
+  const key = previewHoldKey(c.accountId + (bitma ? '-bitma-2027' : ''));
   useEffect(() => {
     setLoadedKey("");
     let value: unknown = sessionFallback.get(key) || [];
     try {
       value = JSON.parse(sessionStorage.getItem(key) || JSON.stringify(value));
     } catch {}
-    setHolds(validPreviewHolds(value, g.stalls, blocked));
+    setHolds(validPreviewHolds(value, bitma?allBitma.stalls:g.stalls, blocked));
     setLoadedKey(key);
-  }, [key]);
+  }, [key,g.stalls,blocked,bitma,allBitma.stalls]);
   useEffect(() => {
     if (loadedKey !== key) return;
     sessionFallback.set(key, holds);
@@ -121,13 +127,13 @@ export default function PreviewViewer({
     const timer = setInterval(
       () =>
         setHolds((current) => {
-          const next = validPreviewHolds(current, g.stalls, blocked);
+          const next = validPreviewHolds(current, bitma?allBitma.stalls:g.stalls, blocked);
           return next.length === current.length ? current : next;
         }),
       1000,
     );
     return () => clearInterval(timer);
-  }, [g.stalls, blocked]);
+  }, [g.stalls, blocked,bitma,allBitma.stalls]);
   useEffect(() => () => clearTimeout(highlightTimer.current), []);
   const ownedIds = useMemo(() => holds.flatMap((h) => h.stallIds), [holds]);
   const bookings = useMemo(
@@ -236,7 +242,11 @@ export default function PreviewViewer({
         </button>
       ))}
     </div>
-  ) : (
+  ) : bitma ? <nav className={chrome.nav} aria-label="BITMA hall navigation">
+    <select aria-label="BITMA hall" value={bitmaHall} onChange={e=>{setBitmaHall(e.target.value);setTarget(undefined);setHighlight([]);setInspected(undefined);setMessage('');
+    }}><option value="">Campus overview</option>{bitmaSource.halls.map(h=><option key={h.id} value={h.id}>{h.name}</option>)}</select>
+    <button aria-label="Select booth area" aria-pressed={areaSelection} onClick={()=>setAreaSelection(v=>!v)}>{areaSelection?'Drag to select':'Area select'}</button>
+  </nav> : (
     <nav className={chrome.nav} aria-label="Exhibition and pavilion navigation">
       {(["DTA", "DCC"] as const).map((name) => (
         <button
@@ -297,10 +307,10 @@ export default function PreviewViewer({
           <span className={chrome.selectionIcon}>{selected.length ? <Check size={18} /> : <MousePointer2 size={18} />}</span>
           <div>
             <strong title={picked.map((st) => st.code).join(', ')}>{selected.length
-              ? `${selected.length} ${selected.length === 1 ? 'booth' : 'booths'} · ${area.toFixed(2)} m² · ${money(price, currency)}`
+              ? `${selected.length} ${bitma?(selected.length===1?'allocation':'allocations'):(selected.length === 1 ? 'booth' : 'booths')} · ${area.toFixed(2)} m² · ${bitma?'Unpriced':money(price, currency)}`
               : 'Select booths to begin'}</strong>
             <p title={booking ? `${booking.company}${booking.expiresAt ? ` · expires ${new Date(booking.expiresAt).toLocaleString()}` : ''}` : undefined}>
-              {st ? `${st.code} · ${measuredLabel(st)} · ${booking ? (ownedIds.includes(st.id) ? 'Your preview hold' : booking.status === 'confirmed' ? 'Confirmed' : 'Pending') : 'Available'}` : 'Select adjoining booths on the map'}
+              {st ? `${st.code} · ${st.displayLabel||measuredLabel(st)}${st.sourceLabel?' · '+st.sourceLabel:''} · ${booking ? (ownedIds.includes(st.id) ? 'Your preview hold' : booking.status === 'confirmed' ? 'Confirmed' : 'Pending') : 'Available'}` : 'Select adjoining booths on the map'}
             </p>
           </div>
         </div>
@@ -345,7 +355,7 @@ export default function PreviewViewer({
             <select
               aria-label="Preview expo"
               value={eid}
-              onChange={(e) => setEdition(e.target.value)}
+              onChange={(e) => {setEdition(e.target.value);setSelected([]);setReview(false);setInspected(undefined);setTarget(undefined);setHighlight([]);setMessage('');}}
             >
               {editions.map((e) => (
                 <option key={e.id} value={e.id}>
@@ -354,7 +364,11 @@ export default function PreviewViewer({
               ))}
             </select>
         </PreviewHeader>
+        {bitma && <p className="px-4 py-2 text-xs text-slate-600" data-bitma-notice>BITMA 2027 · 26 Oct layout · hall gaps illustrative · prices not supplied · simulated bookings only.</p>}
         <FloorCanvas
+          key={g.hall.id}
+          areaSelection={bitma&&areaSelection}
+          onAreaSelect={ids=>{const available=ids.filter(id=>!bookings.some(b=>b.stallIds.includes(id)));setSelected(available);setAreaSelection(false);setMessage(available.length?'Area selected · review before holding':'No available booths in this area');}}
           geometry={g}
           bookings={bookings}
           selected={selected}
@@ -376,8 +390,8 @@ export default function PreviewViewer({
             <h3>Preview selection</h3>
             <p>{picked.map((st) => st.code).join(", ")}</p>
             <p>
-              {selected.length} stalls · {area.toFixed(2)} m² ·{" "}
-              {money(price, currency)}
+              {selected.length} {bitma?'allocations':'stalls'} · {area.toFixed(2)} m² ·{" "}
+              {bitma?'Pricing not supplied':money(price, currency)}
             </p>
             <p>
               Simulated hold only. No booking, confirmation or payment is

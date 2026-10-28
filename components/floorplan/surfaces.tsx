@@ -33,12 +33,12 @@ export function BoothSurface({
 }) {
   return (
     <g data-booth-surfaces="true">
-      <rect
+      {st.footprintPoints ? <polygon points={st.footprintPoints.map(p=>`${p.x},${p.y}`).join(' ')} {...surfacePaint(st,status,selected)} data-selection-overlay={selected?'true':undefined} /> : <rect
         width={st.width}
         height={st.height}
         {...surfacePaint(st, status, selected)}
         data-selection-overlay={selected ? "true" : undefined}
-      />
+      />}
     </g>
   );
 }

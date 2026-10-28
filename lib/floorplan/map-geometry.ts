@@ -11,7 +11,7 @@ export type Point = { x: number; y: number };
 export type Footprint = Pick<
   Stall,
   "x" | "y" | "width" | "height" | "rotation"
->;
+> & { footprintPoints?: Point[] };
 export const DEFAULT_PROJECTION: ProjectionProfile = {
   angleDeg: 14,
   extrusionM: 0.65,
@@ -35,15 +35,15 @@ export function corners(st: Footprint): number[][] {
   const r = (st.rotation * Math.PI) / 180,
     c = Math.cos(r),
     n = Math.sin(r);
-  return [
+  return (st.footprintPoints?.map(p=>[p.x,p.y]) || [
     [0, 0],
     [st.width, 0],
     [st.width, st.height],
     [0, st.height],
-  ].map(([x, y]) => [st.x + x * c - y * n, st.y + x * n + y * c]);
+  ]).map(([x, y]) => [st.x + x * c - y * n, st.y + x * n + y * c]);
 }
-export const footprintArea = (st: Pick<Stall, "width" | "height">) =>
-  st.width * st.height;
+export const footprintArea = (st: Pick<Stall, "width" | "height" | "footprintPoints">) =>
+  st.footprintPoints?.length ? polygonArea(st.footprintPoints) : st.width * st.height;
 export const polygonArea = (p: Point[]) =>
   Math.abs(
     p.reduce((sum, a, i) => {

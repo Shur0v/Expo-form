@@ -61,9 +61,9 @@ export function joinedEdges(
       near = ks.length
         ? [...new Set([...ks.flatMap((k) => cells.get(k) || []), ...large])]
         : placed;
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < pts.length; i++) {
       const a = pts[i],
-        b = pts[(i + 1) % 4],
+        b = pts[(i + 1) % pts.length],
         u = [b[0] - a[0], b[1] - a[1]],
         length2 = dot(u, u);
       if (u[1] * dx - u[0] * dy <= 1e-9) continue;
@@ -76,9 +76,9 @@ export function joinedEdges(
         )
           continue;
         const q = points.get(other.id)!;
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < q.length; j++) {
           const c = q[j],
-            d = q[(j + 1) % 4],
+            d = q[(j + 1) % q.length],
             v = [d[0] - c[0], d[1] - c[1]],
             ca = [c[0] - a[0], c[1] - a[1]];
           if (

@@ -1,0 +1,563 @@
+{
+  "sourceVersion": "bitma-2027-pdf-2026-10-26-v1",
+  "sourceSha256": "5b2e98f89f1ff621c8b4f985f0d972c475dceb76e1517f4e888a7b4b9e9f79e8",
+  "allocations": 400,
+  "totalRentableAreaM2": 14685.53645312,
+  "hallCount": 9,
+  "halls": [
+    {
+      "id": "1",
+      "internalWidthM": 62.48,
+      "internalLengthM": 22.55,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 9,
+      "rentableAreaM2": 980,
+      "sharedCorridorLabels": 12
+    },
+    {
+      "id": "2",
+      "internalWidthM": 62.48,
+      "internalLengthM": 22.55,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 9,
+      "rentableAreaM2": 980,
+      "sharedCorridorLabels": 12
+    },
+    {
+      "id": "3",
+      "internalWidthM": 62.48,
+      "internalLengthM": 22.55,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 9,
+      "rentableAreaM2": 980,
+      "sharedCorridorLabels": 12
+    },
+    {
+      "id": "4",
+      "internalWidthM": 69.7992,
+      "internalLengthM": 28.0416,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 62,
+      "rentableAreaM2": 1131.53645312,
+      "sharedCorridorLabels": 20
+    },
+    {
+      "id": "1A",
+      "internalWidthM": 37,
+      "internalLengthM": 44,
+      "dimensionSource": "User-confirmed 37 × 44 m",
+      "allocations": 27,
+      "rentableAreaM2": 869,
+      "sharedCorridorLabels": 15
+    },
+    {
+      "id": "6",
+      "internalWidthM": 37,
+      "internalLengthM": 44,
+      "dimensionSource": "User-confirmed 37 × 44 m",
+      "allocations": 20,
+      "rentableAreaM2": 944,
+      "sharedCorridorLabels": 13
+    },
+    {
+      "id": "2A",
+      "internalWidthM": 15.24,
+      "internalLengthM": 53.6448,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 14,
+      "rentableAreaM2": 540,
+      "sharedCorridorLabels": 3
+    },
+    {
+      "id": "4A",
+      "internalWidthM": 15,
+      "internalLengthM": 60,
+      "dimensionSource": "Printed PDF dimensions",
+      "allocations": 80,
+      "rentableAreaM2": 500,
+      "sharedCorridorLabels": 6
+    },
+    {
+      "id": "EZ",
+      "internalWidthM": 250,
+      "internalLengthM": 50,
+      "dimensionSource": "Derived from repeated printed booth grid",
+      "allocations": 170,
+      "rentableAreaM2": 7761,
+      "sharedCorridorLabels": 29
+    }
+  ],
+  "imperialBooths": [
+    {
+      "code": "4-C1",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B1",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A1",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D1",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B2",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C2",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A2",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D2",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C3",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A3",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B3",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D3",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B4",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C4",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A4",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D4",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C5",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A5",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B5",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D5",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A6",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B6",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C6",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-D6",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-A7",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-B7",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    },
+    {
+      "code": "4-C7",
+      "widthM": 2.4384,
+      "lengthM": 2.4384,
+      "areaM2": 5.94579456,
+      "areaSqFt": 64
+    }
+  ],
+  "composites": [
+    {
+      "code": "1/36-57",
+      "areaM2": 192,
+      "polygonPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 15,
+          "y": 0
+        },
+        {
+          "x": 15,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 11
+        },
+        {
+          "x": 0,
+          "y": 11
+        }
+      ]
+    },
+    {
+      "code": "2/36-57",
+      "areaM2": 192,
+      "polygonPoints": [
+        {
+          "x": 0,
+          "y": 18
+        },
+        {
+          "x": 0,
+          "y": 3
+        },
+        {
+          "x": 2,
+          "y": 3
+        },
+        {
+          "x": 2,
+          "y": 0
+        },
+        {
+          "x": 11,
+          "y": 0
+        },
+        {
+          "x": 11,
+          "y": 18
+        }
+      ]
+    },
+    {
+      "code": "3/36-57",
+      "areaM2": 192,
+      "polygonPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 15,
+          "y": 0
+        },
+        {
+          "x": 15,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 2
+        },
+        {
+          "x": 18,
+          "y": 11
+        },
+        {
+          "x": 0,
+          "y": 11
+        }
+      ]
+    },
+    {
+      "code": "EZ-R77-79",
+      "areaM2": 27,
+      "polygonPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 6,
+          "y": 0
+        },
+        {
+          "x": 6,
+          "y": 3
+        },
+        {
+          "x": 3,
+          "y": 3
+        },
+        {
+          "x": 3,
+          "y": 6
+        },
+        {
+          "x": 0,
+          "y": 6
+        }
+      ]
+    },
+    {
+      "code": "EZ-L78-80",
+      "areaM2": 27,
+      "polygonPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 3,
+          "y": 0
+        },
+        {
+          "x": 3,
+          "y": 3
+        },
+        {
+          "x": 6,
+          "y": 3
+        },
+        {
+          "x": 6,
+          "y": 6
+        },
+        {
+          "x": 0,
+          "y": 6
+        }
+      ]
+    }
+  ],
+  "correctedCodes": [
+    {
+      "printed": "2/36-57",
+      "corrected": "1/36-57",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/82-84",
+      "corrected": "1/82-84",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/58-81",
+      "corrected": "1/58-81",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/24-35",
+      "corrected": "1/24-35",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/85-90",
+      "corrected": "1/85-90",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/91-94",
+      "corrected": "1/91-94",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/95-111",
+      "corrected": "1/95-111",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/1-15",
+      "corrected": "1/1-15",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "2/16-23",
+      "corrected": "1/16-23",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/58-81",
+      "corrected": "2/58-81",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/36-57",
+      "corrected": "2/36-57",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/82-84",
+      "corrected": "2/82-84",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/24-35",
+      "corrected": "2/24-35",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/85-90",
+      "corrected": "2/85-90",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/91-94",
+      "corrected": "2/91-94",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/95-111",
+      "corrected": "2/95-111",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/1-15",
+      "corrected": "2/1-15",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    },
+    {
+      "printed": "1/16-23",
+      "corrected": "2/16-23",
+      "reason": "Prefix corrected to the hall heading, per user instruction."
+    }
+  ],
+  "architectureVectorPaths": 379,
+  "nonRentableStairRegions": [
+    {
+      "hall": "1",
+      "x": 280,
+      "y": 213,
+      "width": 7,
+      "height": 4.55
+    },
+    {
+      "hall": "2",
+      "x": 183,
+      "y": 220.48,
+      "width": 4.55,
+      "height": 7
+    },
+    {
+      "hall": "3",
+      "x": 225,
+      "y": 128,
+      "width": 7,
+      "height": 4.55
+    },
+    {
+      "hall": "4",
+      "x": 179.4,
+      "y": 59.599199999999996,
+      "width": 3.6416,
+      "height": 8.2
+    }
+  ],
+  "measurementLimits": [
+    "Campus origins and inter-hall gaps are illustrative.",
+    "Unlabelled internal offsets are derived from calibrated PDF vector positions.",
+    "Hall 2A uses exact printed feet conversion and calculated equal end offsets.",
+    "Rentable footprint sizes are preserved; Illustrator seam drift up to 0.02 m is reconciled through placement only.",
+    "Merged printed ranges are selectable allocations, not invented subdivisions."
+  ]
+}

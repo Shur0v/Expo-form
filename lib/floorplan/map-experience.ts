@@ -30,6 +30,7 @@ export function boundsOf(stalls: Stall[]): SceneRect {
   };
 }
 export function sceneBounds(layout: FloorLayout): SceneRect {
+  if(layout.siteHalls)return {x:-8,y:-10,w:layout.width+16,h:layout.height+20};
   const frame = layout.referenceVersion
     ? referenceFrame
     : { x: -3, y: -3, w: layout.width + 6, h: layout.height + 6 };

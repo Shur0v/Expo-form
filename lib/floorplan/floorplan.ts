@@ -1,9 +1,12 @@
+import clipping from 'polygon-clipping';
 import {
   corners,
   validateMapModel,
   validateCategoryPublication,
   assignedRegion,
   footprintObstructs,
+  footprintPolygon,
+  multiArea,
 } from "./map-geometry";
 import { tracedReference } from "./reference-layout";
 import type { DemoState, Hall, Stall } from "./types";
@@ -70,6 +73,11 @@ export interface MapObject {
     | "door-south";
 }
 export interface FloorLayout {
+  siteObstacles?: {hall:string;x:number;y:number;width:number;height:number}[];
+  siteArt?: {hall:string;d:string;fill:string;stroke:string;strokeWidth:number}[];
+  siteArtTransform?: string;
+  siteSigns?: {hall:string;x:number;y:number;label:string}[];
+  siteHalls?: { id: string; name: string; x: number; y: number; width: number; height: number; color: string; dimensionSource: string; northRotation?: number }[];
   version: 1;
   pavilionMode?: "automatic" | "objects";
   categories?: MapCategory[];
@@ -127,9 +135,10 @@ export const floorRevision = (s: DemoState, h: Hall) =>
   );
 export { corners } from "./map-geometry";
 export function overlap(
-  a: Pick<Stall, "x" | "y" | "width" | "height" | "rotation">,
-  b: Pick<Stall, "x" | "y" | "width" | "height" | "rotation">,
+  a: Pick<Stall, "x" | "y" | "width" | "height" | "rotation" | "footprintPoints">,
+  b: Pick<Stall, "x" | "y" | "width" | "height" | "rotation" | "footprintPoints">,
 ) {
+  if(a.footprintPoints||b.footprintPoints)return multiArea(clipping.intersection(footprintPolygon(a),footprintPolygon(b)))>1e-7;
   const aa = corners(a),
     bb = corners(b);
   for (const poly of [aa, bb])
