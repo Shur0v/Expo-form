@@ -1,4 +1,5 @@
 import clipping from 'polygon-clipping';
+import type { MapGate } from './map-gates';
 import {
   corners,
   validateMapModel,
@@ -73,6 +74,7 @@ export interface MapObject {
     | "door-south";
 }
 export interface FloorLayout {
+  siteGates?: MapGate[];
   siteObstacles?: {hall:string;x:number;y:number;width:number;height:number}[];
   siteArt?: {hall:string;d:string;fill:string;stroke:string;strokeWidth:number}[];
   siteArtTransform?: string;

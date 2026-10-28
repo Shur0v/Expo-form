@@ -2,6 +2,7 @@
 import json
 import sys
 import pdfplumber
+from bitma_gates import extract_gates
 from pathlib import Path
 
 root=Path(__file__).resolve().parents[1]
@@ -127,6 +128,7 @@ def rgb(value):
  else:values=list(value)[:3]
  return '#'+''.join(f'{max(0,min(255,round(v*255))):02x}' for v in values)
 with pdfplumber.open(sys.argv[1]) as pdf:
+ gates=extract_gates(pdf,specs)
  for hid,s in specs.items():
   page=pdf.pages[s['page']-1];x0,y0,x1,y1=s['box'];sx=s['w']/(x1-x0);sy=s['h']/(y1-y0)
   def local(q):return ((q['x0']-x0)*sx,(q['top']-y0)*sy,(q['x1']-x0)*sx,(q['bottom']-y0)*sy)
@@ -163,7 +165,7 @@ with pdfplumber.open(sys.argv[1]) as pdf:
              stroke=rgb(q.get('stroking_color')) if q.get('stroke') or q.get('object_type')=='line' else 'none',strokeWidth=round((q.get('linewidth') or .15)*(sx+sy)/2,5))
    key=(item['d'],item['fill'],item['stroke'])
    if key not in seen:seen.add(key);art.append(item)
-out=dict(version='bitma-2027-pdf-2026-10-26-v1',sourceSha256=inventory['sha256'],halls=halls,booths=booths,signs=signs,art=art,obstacles=obstacles,
+out=dict(version='bitma-2027-pdf-2026-10-26-v1',sourceSha256=inventory['sha256'],halls=halls,booths=booths,signs=signs,art=art,obstacles=obstacles,gates=gates,
          notes=['Campus spacing is illustrative and estimated; hall dimensions and rentable footprints are independent.',
                 'Hall 1/2 prefixes corrected to headings. Merged allocation ranges remain single selectable footprints.',
                 'PDF colours and labels are a source snapshot, not live occupancy. No booth prices were supplied.'])

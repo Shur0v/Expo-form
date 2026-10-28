@@ -7,6 +7,7 @@ const {allocationsInArea,pointInAllocation}=require('../lib/floorplan/map-select
 const {measuredGaps}=require('../lib/floorplan/map-dimensions.ts');
 const {joinedEdges}=require('../lib/floorplan/map-structure.ts');
 const {validPreviewHolds,previewHoldKey}=require('../lib/floorplan/map-experience.ts');
+const {gateSpan,wallSegments,gateApproach}=require('../lib/floorplan/map-gates.ts');
 let count=0;
 const test=(name,fn)=>{fn();count++;console.log('PASS '+name)};
 const near=(a,b)=>assert(Math.abs(a-b)<1e-6,`${a} differs from ${b}`);
@@ -15,6 +16,54 @@ test('all nine halls and 400 reviewed allocations are present',()=>{
  assert.equal(g.stalls.length,400);assert.equal(g.layout.siteHalls.length,9);
  const counts=Object.fromEntries(bitmaSource.halls.map(h=>[h.id,bitmaSource.booths.filter(b=>b.hall===h.id).length]));
  assert.deepEqual(counts,{'1':9,'2':9,'3':9,'4':62,'6':20,'1A':27,'2A':14,'4A':80,'EZ':170});
+});
+
+test('all 41 PDF access openings retain their hall, side and measured source position',()=>{
+ const expected={
+  '1':{north:[9,31.812,51.576],south:[26.562],west:[3]},
+  '2':{north:[9,31.812,51.576],south:[26.562],west:[3]},
+  '3':{north:[9,31.812,51.576],south:[26.562],west:[3]},
+  '4':{north:[9,18,35.168,57.98],south:[34.529],west:[3]},
+  '1A':{north:[12.447,29.259],south:[6,30]},'6':{south:[6]},
+  '2A':{north:[6.121],south:[6.121]},'4A':{south:[3,9]},
+  EZ:{north:[51.01,101.007,161.004,201.002],south:[25.914,145.671,206],west:[20.037],east:[5.018,20.012,40.004]}
+ };
+ assert.equal(g.layout.siteGates.length,41);
+ for(const [hall,sides] of Object.entries(expected)){
+  const gates=bitmaGeometry(hall).layout.siteGates;
+  assert.equal(gates.length,Object.values(sides).flat().length);
+  for(const [side,starts] of Object.entries(sides)){
+   const actual=gates.filter(g=>g.side===side).sort((a,b)=>a.sourceStart-b.sourceStart);
+   assert.equal(actual.length,starts.length);
+   actual.forEach((g,i)=>assert(Math.abs(g.sourceStart-starts[i])<.001,`${g.id} moved`));
+  }
+ }
+});
+
+test('gate roles preserve source distinctions without inventing an extra Hall 6 exit',()=>{
+ const gates=g.layout.siteGates;
+ const counts=Object.fromEntries(['entry','exit','fire-exit','cargo','service','access'].map(k=>[k,gates.filter(g=>g.kind===k).length]));
+ assert.deepEqual(counts,{entry:10,exit:9,'fire-exit':7,cargo:2,service:4,access:9});
+ assert.equal(gates.filter(g=>g.roles.includes('fire-exit')).length,8);
+ assert.deepEqual(gates.filter(g=>g.hall==='6').map(g=>g.kind),['entry']);
+ for(const gate of gates.filter(g=>g.kind==='service')){near(gate.clearance.widthM,2.286);near(gate.clearance.heightM,2.7432);}
+ assert.equal(gates.find(g=>g.hall==='EZ'&&g.sourceSide==='east'&&g.kind==='entry').sourceStart,40.003886);
+});
+
+test('campus and hall orientation keep every gate opening clear of walls and gardens',()=>{
+ for(const scope of ['',...bitmaSource.halls.map(h=>h.id)]){
+  const layout=bitmaGeometry(scope).layout;
+  for(const h of layout.siteHalls){
+   const walls=wallSegments(h,layout.siteGates);
+   for(const gate of layout.siteGates.filter(g=>g.hall===h.id)){
+    const span=gateSpan(h,gate),approach=gateApproach(h,gate);
+    assert.equal(gate.sourceSide,scope?gate.side:gate.sourceSide);
+    assert(span.end>span.start);near(span.end-span.start,gate.sourceSpanM);
+    assert(approach.width>0&&approach.height>0);
+    for(const wall of walls.filter(w=>w.side===span.side))assert(Math.min(wall.end,span.end)-Math.max(wall.start,span.start)<1e-6,gate.id+' blocked by wall');
+   }
+  }
+ }
 });
 test('every allocation has a unique stable physical identity',()=>{
  assert.equal(new Set(g.stalls.map(s=>s.id)).size,400);

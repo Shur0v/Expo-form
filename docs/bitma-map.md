@@ -85,3 +85,5 @@ PDF export reuses the current high-resolution pipeline that preserves the blurre
 - Changed-source lint has zero errors and seven existing imported-camera hook warnings. The remaining existing Offer Letter image warnings are unchanged.
 
 Final screenshots and PDF-render evidence are saved in `docs/bitma-evidence/`. The machine-readable dimension/area/correction audit is `docs/bitma-geometry-audit.json`. Generated test PDFs remain under ignored `tmp/`.
+
+The subsequent complete gate audit, including public doors, fire exits, cargo gates, service doors and unlabelled access openings, is recorded in [bitma-gates.md](bitma-gates.md). All 41 openings have shared screen/export geometry and wall/garden interruptions. BITMA now has 21 domain checks.

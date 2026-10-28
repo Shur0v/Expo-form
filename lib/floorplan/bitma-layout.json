@@ -10422,6 +10422,1064 @@
       "height": 8.2
     }
   ],
+  "gates": [
+    {
+      "id": "1-north-10500",
+      "hall": "1",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 289.000094,
+      "y": 195.00008,
+      "width": 3.000031,
+      "height": 0.500058,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 9.000094,
+      "sourceSpanM": 3.000031,
+      "sourcePage": 1,
+      "sourceBox": [
+        817.434,
+        309.64,
+        836.074,
+        312.74699999999996
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "1-north-33312",
+      "hall": "1",
+      "kind": "service",
+      "roles": [
+        "service"
+      ],
+      "label": "3 M",
+      "x": 311.812082,
+      "y": 195.00008,
+      "width": 3.000031,
+      "height": 0.500058,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 31.812082,
+      "sourceSpanM": 3.000031,
+      "sourcePage": 1,
+      "sourceBox": [
+        959.171,
+        309.64,
+        977.811,
+        312.74699999999996
+      ],
+      "clearance": {
+        "widthM": 2.286,
+        "heightM": 2.7432,
+        "source": "H-9 ft / W-7 ft 6 in, printed on the PDF"
+      }
+    },
+    {
+      "id": "1-north-53076",
+      "hall": "1",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 331.576077,
+      "y": 195.00008,
+      "width": 3.000031,
+      "height": 0.500058,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 51.576077,
+      "sourceSpanM": 3.000031,
+      "sourcePage": 1,
+      "sourceBox": [
+        1081.9699999999998,
+        309.64,
+        1100.61,
+        312.74699999999996
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "1-south-28062",
+      "hall": "1",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 306.561705,
+      "y": 217.05815,
+      "width": 3.000031,
+      "height": 0.98386,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 26.561705,
+      "sourceSpanM": 3.000031,
+      "sourcePage": 1,
+      "sourceBox": [
+        926.549,
+        446.693,
+        945.189,
+        452.80600000000004
+      ]
+    },
+    {
+      "id": "1-west-4500",
+      "hall": "1",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 279.595382,
+      "y": 198.000105,
+      "width": 0.983862,
+      "height": 3.000025,
+      "side": "west",
+      "labelAngle": 90,
+      "sourceSide": "west",
+      "sourceStart": 3.000105,
+      "sourceSpanM": 3.000025,
+      "sourcePage": 1,
+      "sourceBox": [
+        759.0,
+        328.28,
+        765.113,
+        346.91999999999996
+      ]
+    },
+    {
+      "id": "1A-north-13947",
+      "hall": "1A",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 247.446703,
+      "y": 159.503707,
+      "width": 3.000019,
+      "height": 0.983796,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 12.446703,
+      "sourceSpanM": 3.000019,
+      "sourcePage": 2,
+      "sourceBox": [
+        220.164,
+        624.4309999999999,
+        246.44099999999997,
+        633.0479999999999
+      ]
+    },
+    {
+      "id": "1A-north-30759",
+      "hall": "1A",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 264.258772,
+      "y": 159.508045,
+      "width": 3.000019,
+      "height": 0.983796,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 29.258772,
+      "sourceSpanM": 3.000019,
+      "sourcePage": 2,
+      "sourceBox": [
+        367.42,
+        624.4689999999999,
+        393.697,
+        633.0859999999999
+      ]
+    },
+    {
+      "id": "1A-south-7500",
+      "hall": "1A",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 240.999923,
+      "y": 203.508159,
+      "width": 3.000019,
+      "height": 0.983796,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 5.999923,
+      "sourceSpanM": 3.000019,
+      "sourcePage": 2,
+      "sourceBox": [
+        163.697,
+        1009.8629999999999,
+        189.974,
+        1018.48
+      ]
+    },
+    {
+      "id": "1A-south-31500",
+      "hall": "1A",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 264.999957,
+      "y": 203.508159,
+      "width": 3.000019,
+      "height": 0.983796,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 29.999957,
+      "sourceSpanM": 3.000019,
+      "sourcePage": 2,
+      "sourceBox": [
+        373.912,
+        1009.8629999999999,
+        400.18899999999996,
+        1018.48
+      ]
+    },
+    {
+      "id": "2-north-10500",
+      "hall": "2",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 164.99988,
+      "y": 215.480113,
+      "width": 0.500074,
+      "height": 2.999929,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 8.999958,
+      "sourceSpanM": 2.999929,
+      "sourcePage": 1,
+      "sourceBox": [
+        1274.085,
+        313.74,
+        1291.656,
+        316.669
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "2-north-33312",
+      "hall": "2",
+      "kind": "service",
+      "roles": [
+        "service"
+      ],
+      "label": "3 M",
+      "x": 164.99988,
+      "y": 192.668119,
+      "width": 0.500074,
+      "height": 2.999929,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 31.811952,
+      "sourceSpanM": 2.999929,
+      "sourcePage": 1,
+      "sourceBox": [
+        1407.698,
+        313.74,
+        1425.269,
+        316.669
+      ],
+      "clearance": {
+        "widthM": 2.286,
+        "heightM": 2.7432,
+        "source": "H-9 ft / W-7 ft 6 in, printed on the PDF"
+      }
+    },
+    {
+      "id": "2-north-53076",
+      "hall": "2",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 164.99988,
+      "y": 172.904031,
+      "width": 0.500074,
+      "height": 2.999929,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 51.57604,
+      "sourceSpanM": 2.999929,
+      "sourcePage": 1,
+      "sourceBox": [
+        1523.459,
+        313.74,
+        1541.03,
+        316.669
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "2-south-28062",
+      "hall": "2",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 187.058121,
+      "y": 197.918465,
+      "width": 0.983929,
+      "height": 2.999929,
+      "side": "east",
+      "labelAngle": -90,
+      "sourceSide": "south",
+      "sourceStart": 26.561606,
+      "sourceSpanM": 2.999929,
+      "sourcePage": 1,
+      "sourceBox": [
+        1376.946,
+        442.938,
+        1394.5169999999998,
+        448.701
+      ]
+    },
+    {
+      "id": "2-west-4500",
+      "hall": "2",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 167.999984,
+      "y": 226.900878,
+      "width": 2.999933,
+      "height": 0.983928,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "west",
+      "sourceStart": 2.999984,
+      "sourceSpanM": 2.999933,
+      "sourcePage": 1,
+      "sourceBox": [
+        1219.0,
+        331.312,
+        1224.763,
+        348.88300000000004
+      ]
+    },
+    {
+      "id": "2A-north-7621",
+      "hall": "2A",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 181.12066,
+      "y": 90.174971,
+      "width": 2.99979,
+      "height": 0.959796,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 6.12066,
+      "sourceSpanM": 2.99979,
+      "sourcePage": 2,
+      "sourceBox": [
+        1075.974,
+        310.571,
+        1111.1299999999999,
+        322.08500000000004
+      ]
+    },
+    {
+      "id": "2A-south-7621",
+      "hall": "2A",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 181.12066,
+      "y": 142.510033,
+      "width": 2.99979,
+      "height": 0.959796,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 6.12066,
+      "sourceSpanM": 2.99979,
+      "sourcePage": 2,
+      "sourceBox": [
+        1075.974,
+        938.3979999999999,
+        1111.1299999999999,
+        949.912
+      ]
+    },
+    {
+      "id": "3-north-10500",
+      "hall": "3",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 233.99999,
+      "y": 109.999932,
+      "width": 2.99994,
+      "height": 0.500073,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 8.99999,
+      "sourceSpanM": 2.99994,
+      "sourcePage": 2,
+      "sourceBox": [
+        145.025,
+        238.0379999999999,
+        162.577,
+        240.95999999999992
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "3-north-33312",
+      "hall": "3",
+      "kind": "service",
+      "roles": [
+        "service"
+      ],
+      "label": "3 M",
+      "x": 256.812146,
+      "y": 109.999932,
+      "width": 2.99994,
+      "height": 0.500073,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 31.812146,
+      "sourceSpanM": 2.99994,
+      "sourcePage": 2,
+      "sourceBox": [
+        278.49399999999997,
+        238.0379999999999,
+        296.046,
+        240.95999999999992
+      ],
+      "clearance": {
+        "widthM": 2.286,
+        "heightM": 2.7432,
+        "source": "H-9 ft / W-7 ft 6 in, printed on the PDF"
+      }
+    },
+    {
+      "id": "3-north-53076",
+      "hall": "3",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 276.575992,
+      "y": 109.999932,
+      "width": 2.99994,
+      "height": 0.500073,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 51.575992,
+      "sourceSpanM": 2.99994,
+      "sourcePage": 2,
+      "sourceBox": [
+        394.128,
+        238.0379999999999,
+        411.68,
+        240.95999999999992
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "3-south-28062",
+      "hall": "3",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 251.561567,
+      "y": 132.058073,
+      "width": 2.99994,
+      "height": 0.983887,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 26.561567,
+      "sourceSpanM": 2.99994,
+      "sourcePage": 2,
+      "sourceBox": [
+        247.774,
+        366.927,
+        265.326,
+        372.67600000000004
+      ]
+    },
+    {
+      "id": "3-west-4500",
+      "hall": "3",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 224.595268,
+      "y": 113.000026,
+      "width": 0.9838,
+      "height": 2.999924,
+      "side": "west",
+      "labelAngle": 90,
+      "sourceSide": "west",
+      "sourceStart": 3.000026,
+      "sourceSpanM": 2.999924,
+      "sourcePage": 2,
+      "sourceBox": [
+        90.0,
+        255.56799999999998,
+        95.756,
+        273.097
+      ]
+    },
+    {
+      "id": "4-north-10500",
+      "hall": "4",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 155.000207,
+      "y": 57.799217,
+      "width": 0.499904,
+      "height": 3.000029,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 8.999954,
+      "sourceSpanM": 3.000029,
+      "sourcePage": 2,
+      "sourceBox": [
+        593.969,
+        229.40070000000003,
+        609.947,
+        232.05970000000002
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "4-north-19500",
+      "hall": "4",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 155.000169,
+      "y": 48.799244,
+      "width": 0.499904,
+      "height": 3.000029,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 17.999927,
+      "sourceSpanM": 3.000029,
+      "sourcePage": 2,
+      "sourceBox": [
+        641.9024000000001,
+        229.40049999999997,
+        657.8804,
+        232.05949999999996
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "4-north-36668",
+      "hall": "4",
+      "kind": "service",
+      "roles": [
+        "service"
+      ],
+      "label": "3 M",
+      "x": 154.999962,
+      "y": 31.630849,
+      "width": 0.500092,
+      "height": 3.000029,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 35.168322,
+      "sourceSpanM": 3.000029,
+      "sourcePage": 2,
+      "sourceBox": [
+        733.3404,
+        229.3994,
+        749.3184,
+        232.05939999999998
+      ],
+      "clearance": {
+        "widthM": 2.286,
+        "heightM": 2.7432,
+        "source": "H-9 ft / W-7 ft 6 in, printed on the PDF"
+      }
+    },
+    {
+      "id": "4-north-59480",
+      "hall": "4",
+      "kind": "access",
+      "roles": [
+        "access"
+      ],
+      "label": "3 M",
+      "x": 155.000094,
+      "y": 8.818879,
+      "width": 0.499904,
+      "height": 3.000029,
+      "side": "west",
+      "labelAngle": -90,
+      "sourceSide": "north",
+      "sourceStart": 57.980293,
+      "sourceSpanM": 3.000029,
+      "sourcePage": 2,
+      "sourceBox": [
+        854.8358000000001,
+        229.40009999999995,
+        870.8138,
+        232.05909999999994
+      ],
+      "note": "The PDF marks a 3 M opening without an entry/exit designation."
+    },
+    {
+      "id": "4-south-36029",
+      "hall": "4",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 182.346247,
+      "y": 32.270623,
+      "width": 0.983827,
+      "height": 3.000029,
+      "side": "east",
+      "labelAngle": -90,
+      "sourceSide": "south",
+      "sourceStart": 34.528549,
+      "sourceSpanM": 3.000029,
+      "sourcePage": 2,
+      "sourceBox": [
+        729.933,
+        374.855,
+        745.911,
+        380.08799999999997
+      ]
+    },
+    {
+      "id": "4-west-4500",
+      "hall": "4",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 158.000117,
+      "y": 68.822041,
+      "width": 2.999985,
+      "height": 0.983862,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "west",
+      "sourceStart": 3.000117,
+      "sourceSpanM": 2.999985,
+      "sourcePage": 2,
+      "sourceBox": [
+        546.0,
+        245.3573,
+        551.24,
+        261.3143
+      ]
+    },
+    {
+      "id": "4A-south-4500",
+      "hall": "4A",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 197.999982,
+      "y": 59.00807,
+      "width": 2.999982,
+      "height": 0.983836,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 2.999982,
+      "sourceSpanM": 2.999982,
+      "sourcePage": 2,
+      "sourceBox": [
+        1416.902,
+        892.4939999999999,
+        1449.932,
+        903.3119999999999
+      ]
+    },
+    {
+      "id": "4A-south-10500",
+      "hall": "4A",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 203.999946,
+      "y": 59.00807,
+      "width": 2.999982,
+      "height": 0.983836,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 8.999946,
+      "sourceSpanM": 2.999982,
+      "sourcePage": 2,
+      "sourceBox": [
+        1482.962,
+        892.4939999999999,
+        1515.992,
+        903.3119999999999
+      ]
+    },
+    {
+      "id": "6-south-7500",
+      "hall": "6",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 143.508107,
+      "y": 187.99999,
+      "width": 0.983785,
+      "height": 3.000003,
+      "side": "east",
+      "labelAngle": -90,
+      "sourceSide": "south",
+      "sourceStart": 6.000007,
+      "sourceSpanM": 3.000003,
+      "sourcePage": 2,
+      "sourceBox": [
+        609.274,
+        994.781,
+        634.019,
+        1002.885
+      ]
+    },
+    {
+      "id": "EZ-east-7517",
+      "hall": "EZ",
+      "kind": "exit",
+      "roles": [
+        "exit"
+      ],
+      "label": "EXIT",
+      "x": 248.398246,
+      "y": 247.017903,
+      "width": 1.6398,
+      "height": 4.997974,
+      "side": "east",
+      "labelAngle": 90,
+      "sourceSide": "east",
+      "sourceStart": 5.017903,
+      "sourceSpanM": 4.997974,
+      "sourcePage": 1,
+      "sourceBox": [
+        1571.405,
+        671.121,
+        1581.2749999999999,
+        701.216
+      ]
+    },
+    {
+      "id": "EZ-east-22511",
+      "hall": "EZ",
+      "kind": "cargo",
+      "roles": [
+        "cargo"
+      ],
+      "label": "CARGO ENTRY",
+      "x": 249.660576,
+      "y": 262.01199,
+      "width": 0.678681,
+      "height": 4.997974,
+      "side": "east",
+      "labelAngle": 90,
+      "sourceSide": "east",
+      "sourceStart": 20.01199,
+      "sourceSpanM": 4.997974,
+      "sourcePage": 1,
+      "sourceBox": [
+        1579.003,
+        761.4069999999999,
+        1583.088,
+        791.502
+      ]
+    },
+    {
+      "id": "EZ-east-42503",
+      "hall": "EZ",
+      "kind": "entry",
+      "roles": [
+        "entry"
+      ],
+      "label": "ENTRY",
+      "x": 248.3602,
+      "y": 282.003886,
+      "width": 1.6398,
+      "height": 4.997974,
+      "side": "east",
+      "labelAngle": -90,
+      "sourceSide": "east",
+      "sourceStart": 40.003886,
+      "sourceSpanM": 4.997974,
+      "sourcePage": 1,
+      "sourceBox": [
+        1571.176,
+        881.787,
+        1581.0459999999998,
+        911.882
+      ]
+    },
+    {
+      "id": "EZ-north-52510",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 51.009731,
+      "y": 241.680807,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 51.009731,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        383.318,
+        638.9839999999999,
+        401.375,
+        643.069
+      ]
+    },
+    {
+      "id": "EZ-north-102507",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 101.007339,
+      "y": 241.680807,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 101.007339,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        684.255,
+        638.9839999999999,
+        702.312,
+        643.069
+      ]
+    },
+    {
+      "id": "EZ-north-162504",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 161.004235,
+      "y": 241.680807,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 161.004235,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        1045.378,
+        638.9839999999999,
+        1063.435,
+        643.069
+      ]
+    },
+    {
+      "id": "EZ-north-202502",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 201.002222,
+      "y": 241.680807,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "north",
+      "labelAngle": 0,
+      "sourceSide": "north",
+      "sourceStart": 201.002222,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        1286.127,
+        638.9839999999999,
+        1304.184,
+        643.069
+      ]
+    },
+    {
+      "id": "EZ-south-27414",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 25.914151,
+      "y": 291.660712,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 25.914151,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        232.267,
+        939.935,
+        250.32399999999998,
+        944.02
+      ]
+    },
+    {
+      "id": "EZ-south-147171",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 145.670696,
+      "y": 291.660712,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 145.670696,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        953.085,
+        939.935,
+        971.142,
+        944.02
+      ]
+    },
+    {
+      "id": "EZ-south-207500",
+      "hall": "EZ",
+      "kind": "fire-exit",
+      "roles": [
+        "fire-exit"
+      ],
+      "label": "FIRE EXIT",
+      "x": 205.999872,
+      "y": 291.660712,
+      "width": 2.999986,
+      "height": 0.678409,
+      "side": "south",
+      "labelAngle": 0,
+      "sourceSide": "south",
+      "sourceStart": 205.999872,
+      "sourceSpanM": 2.999986,
+      "sourcePage": 1,
+      "sourceBox": [
+        1316.208,
+        939.935,
+        1334.265,
+        944.02
+      ]
+    },
+    {
+      "id": "EZ-west-22536",
+      "hall": "EZ",
+      "kind": "cargo",
+      "roles": [
+        "cargo",
+        "fire-exit"
+      ],
+      "label": "CARGO ENTRY",
+      "x": -0.339424,
+      "y": 262.037234,
+      "width": 0.678681,
+      "height": 4.997974,
+      "side": "west",
+      "labelAngle": 90,
+      "sourceSide": "west",
+      "sourceStart": 20.037234,
+      "sourceSpanM": 4.997974,
+      "sourcePage": 1,
+      "sourceBox": [
+        74.24600000000001,
+        761.559,
+        78.331,
+        791.654
+      ],
+      "note": "One physical opening has both CARGO ENTRY and FIRE EXIT annotations in the PDF."
+    }
+  ],
   "notes": [
     "Campus spacing is illustrative and estimated; hall dimensions and rentable footprints are independent.",
     "Hall 1/2 prefixes corrected to headings. Merged allocation ranges remain single selectable footprints.",

@@ -46,10 +46,16 @@ async function main(){
   const svg=fs.readFileSync(path.join(output,'bitma-campus.svg'),'utf8');
   assert(svg.includes('data-bitma-campus'));assert(svg.includes('filter='));
   assert.equal((svg.match(/data-map-garden=/g)||[]).length,9,'Export lost a hall garden band');
+  assert.equal((svg.match(/data-map-gate=/g)||[]).length,41,'SVG omitted a PDF gate');
+  assert.equal((svg.match(/data-gate-approach=/g)||[]).length,41,'SVG blocked a gate approach');
+  assert(svg.includes('clip-rule="evenodd"'),'SVG lost garden gate openings');
   for(const st of bitmaGeometry().stalls)assert(svg.includes(st.code),'SVG omitted '+st.code);
   await download(page,'bitma-campus.pdf',()=>page.click('[aria-label="Print / PDF"]'));
   for(const [id,count] of [['1',9],['2',9],['3',9],['4',62],['1A',27],['6',20],['2A',14],['4A',80],['EZ',170]]){
    await page.select('[aria-label="BITMA hall"]',id);await page.waitForSelector(`[data-live-map][data-stall-count="${count}"]`);await delay(300);
+   const expected=bitmaGeometry(id).layout.siteGates;
+   const actual=await page.$$eval('[data-live-map] [data-map-gate]',nodes=>nodes.map(n=>({id:n.getAttribute('data-map-gate'),kind:n.getAttribute('data-gate-kind'),side:n.getAttribute('data-gate-side')})));
+   assert.deepEqual(actual,expected.map(g=>({id:g.id,kind:g.kind,side:g.side})),`Hall ${id} gates differ from the PDF inventory`);
    await page.screenshot({path:path.join(output,`hall-${id}.png`),fullPage:true});
   }
   await page.select('[aria-label="BITMA hall"]','4');await page.waitForSelector('[data-live-map][data-stall-count="62"]');await delay(400);

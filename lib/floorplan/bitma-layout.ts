@@ -1,6 +1,7 @@
 import source from './bitma-layout.json';
 import type { MapGeometry } from './floorplan';
 import type { Hall, Stall } from './types';
+import type { GateSide, MapGate } from './map-gates';
 
 export const BITMA_EDITION = 'bitma-2027';
 export const bitmaSource = source;
@@ -30,6 +31,14 @@ export function bitmaGeometry(scope = ''): MapGeometry {
     return {...s,x:selectedHall.northRotation?selectedHall.sourceWidth-y:x,y:selectedHall.northRotation?x:y};
   });
   const siteArt=source.art.filter(a=>!selectedHall||a.hall===scope);
+  const siteGates:MapGate[]=source.gates.filter(s=>!selectedHall||s.hall===scope).map(s=>{
+    if(!selectedHall)return {...s,side:s.side as GateSide};
+    const x=s.x-selectedHall.x,y=s.y-selectedHall.y;
+    return {...s,x:selectedHall.northRotation?selectedHall.sourceWidth-y-s.height:x,y:selectedHall.northRotation?x:y,
+      width:selectedHall.northRotation?s.height:s.width,height:selectedHall.northRotation?s.width:s.height,
+      side:(selectedHall.northRotation?({west:'north',north:'east',east:'south',south:'west'}[s.side as GateSide]):s.side) as GateSide,
+      labelAngle:s.labelAngle+(selectedHall.northRotation?90:0)};
+  });
   const siteObstacles=source.obstacles.filter(s=>!selectedHall||s.hall===scope).map(s=>{
     if(!selectedHall)return s;
     const x=s.x-selectedHall.x,y=s.y-selectedHall.y;
@@ -37,5 +46,5 @@ export function bitmaGeometry(scope = ''): MapGeometry {
   });
   const siteArtTransform=selectedHall?(selectedHall.northRotation?`matrix(0 1 -1 0 ${selectedHall.sourceWidth+selectedHall.y} ${-selectedHall.x})`:`translate(${-selectedHall.x} ${-selectedHall.y})`):undefined;
   return {hall,layout:{version:1,name:hall.name,width:hall.width,height:hall.height,physicalHallId:hall.id,
-    calibrated:true,objects:[],pavilionMode:'objects',siteObstacles,siteArt,siteArtTransform,siteSigns,siteHalls:selectedHall?[{...selectedHall,x:0,y:0,width:hall.width,height:hall.height}]:source.halls},stalls,revision:source.version};
+    calibrated:true,objects:[],pavilionMode:'objects',siteGates,siteObstacles,siteArt,siteArtTransform,siteSigns,siteHalls:selectedHall?[{...selectedHall,x:0,y:0,width:hall.width,height:hall.height}]:source.halls},stalls,revision:source.version};
 }
