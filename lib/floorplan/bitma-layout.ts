@@ -8,32 +8,39 @@ export const bitmaSource = source;
 
 /** Campus placements are an illustrative site plan; booth geometry stays metric and unchanged. */
 export const BITMA_CAMPUS = {
-  width: 430,
-  height: 220,
-  boundary: [[-8,150],[196,150],[196,105],[219,105],[219,48],[165,48],[165,-8],[305,-8],[305,43],[375,43],[430,62],[430,82],[380,132],[430,132],[430,220],[-8,220]] as const,
+  // The overview is a campus plan, not a compact hall collage. Each hall keeps
+  // its exact PDF footprint; these offsets give the buildings clear breathing room.
+  width: 800,
+  height: 570,
+  boundary: [[0,390],[130,390],[130,260],[265,260],[265,105],[300,105],[300,0],[520,0],[520,70],[565,70],[565,120],[735,120],[790,170],[735,220],[735,300],[770,335],[770,500],[0,500]] as const,
   origins: {
-    '1': { x: 350, y: 165 },
-    '2': { x: 265, y: 128 },
-    '3': { x: 315, y: 64 },
-    '4': { x: 230, y: 0 },
-    '1A': { x: 310, y: 112 },
-    '6': { x: 205, y: 108 },
-    '2A': { x: 290, y: 72 },
-    '4A': { x: 270, y: 0 },
-    EZ: { x: 0, y: 162 },
+    '1': { x: 625, y: 420 },
+    '2': { x: 385, y: 320 },
+    '3': { x: 610, y: 175 },
+    '4': { x: 350, y: 20 },
+    '1A': { x: 500, y: 320 },
+    '6': { x: 150, y: 300 },
+    '2A': { x: 405, y: 175 },
+    '4A': { x: 450, y: 20 },
+    EZ: { x: 20, y: 420 },
   } satisfies Record<string, { x: number; y: number }>,
   features: [
-    { id: 'parking-north-west', kind: 'parking', x: 177, y: 14, width: 42, height: 28 },
-    { id: 'north-east-service-area', kind: 'service', x: 289, y: 3, width: 13, height: 25 },
-    { id: 'parking-hall-4a-east', kind: 'parking', x: 289, y: 31, width: 14, height: 18 },
-    { id: 'parking-central-north', kind: 'parking', x: 262, y: 74, width: 15, height: 13 },
-    { id: 'parking-hall-3-east', kind: 'parking', x: 382, y: 50, width: 12, height: 12 },
-    { id: 'parking-hall-1a-east', kind: 'parking', x: 390, y: 137, width: 25, height: 17 },
-    { id: 'parking-hall-1-south-west', kind: 'parking', x: 326, y: 161, width: 18, height: 8 },
-    { id: 'prayer-room', kind: 'prayer', x: 255, y: 94, width: 11, height: 30 },
-    { id: 'iccb-office', kind: 'office', x: 292, y: 130, width: 14, height: 19 },
-    { id: 'inauguration-service-hall', kind: 'service', x: 254, y: 157, width: 7, height: 39 },
+    { id: 'parking-north-west', kind: 'parking', x: 302, y: 30, width: 38, height: 26 },
+    { id: 'north-east-service-area', kind: 'service', x: 490, y: 8, width: 15, height: 24 },
+    { id: 'parking-hall-4a-east', kind: 'parking', x: 490, y: 48, width: 18, height: 17 },
+    { id: 'parking-central-north', kind: 'parking', x: 410, y: 115, width: 22, height: 15 },
+    { id: 'parking-hall-3-east', kind: 'parking', x: 696, y: 142, width: 20, height: 14 },
+    { id: 'parking-hall-1a-east', kind: 'parking', x: 548, y: 282, width: 24, height: 18 },
+    { id: 'parking-hall-1-south-west', kind: 'parking', x: 565, y: 390, width: 20, height: 15 },
+    { id: 'prayer-room', kind: 'prayer', x: 310, y: 170, width: 15, height: 38 },
+    { id: 'iccb-office', kind: 'office', x: 425, y: 332, width: 24, height: 25 },
+    { id: 'inauguration-service-hall', kind: 'service', x: 300, y: 350, width: 18, height: 55 },
   ],
+  amenities: {
+    '2': { food: { x: 379, y: 340 }, service: { x: 379, y: 343 } },
+    '3': { food: { x: 603.5, y: 180 }, service: { x: 603.5, y: 183 } },
+    '4': { food: { x: 382, y: 38 }, service: { x: 382, y: 41 } },
+  },
 } as const;
 
 export function bitmaGeometry(scope = ''): MapGeometry {

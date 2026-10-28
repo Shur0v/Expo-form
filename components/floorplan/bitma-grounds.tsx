@@ -67,15 +67,15 @@ export function BitmaGrounds({layout,id,crop,onHallOpen}:{layout:FloorLayout;id:
   {(layout.siteHalls?.length||0)>1&&<>
     <g data-bitma-campus-outline>
       <path d={campusBoundaryPath} fill="#f8fafc" stroke="#aeb9df" strokeWidth="2.2" strokeLinejoin="round"/>
-      <path d="M-2 153H200V101H222V52H168V-3H301V47H372L422 62V82L375 128V137H425V217" fill="none" stroke="#d2d7ea" strokeWidth=".8" strokeDasharray="2 2"/>
-      <path d="M208 100V150M258 76H319M255 151H340M302 49V108M376 115V163" fill="none" stroke="#c7cbd2" strokeWidth="1.1" strokeDasharray="1 1.5"/>
+      <path d="M132 250H735M340 250V292M330 390H510" fill="none" stroke="#d2d7ea" strokeWidth="1.1" strokeDasharray="2.4 2.4"/>
+      <path d="M295 235H385M438 145V165M585 235H700M590 300V312" fill="none" stroke="#c7cbd2" strokeWidth="1.1" strokeDasharray="1.2 1.8"/>
       <CampusFeatures/>
-      <g transform="translate(66 30)" aria-label="North"><circle r="5" fill="#fff" stroke="#9ca3af" strokeWidth=".8"/><path d="M0-2 1.5 3 0 2 -1.5 3Z" fill="#dc2626"/><text x="0" y="-7" textAnchor="middle" fontFamily="serif" fontSize="5" fill="#334155">N</text></g>
-      <g transform="translate(337 210)"><circle r="4" fill="#e2e8f0" stroke="#64748b" strokeWidth=".6"/><text x="0" y="1" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.8" fontWeight="700" fill="#475569">ENTRY</text></g>
+      <g transform="translate(80 84)" aria-label="North"><circle r="5.5" fill="#fff" stroke="#9ca3af" strokeWidth=".8"/><path d="M0-2 1.5 3 0 2 -1.5 3Z" fill="#dc2626"/><text x="0" y="-7" textAnchor="middle" fontFamily="serif" fontSize="5" fill="#334155">N</text></g>
+      <g transform="translate(470 486)"><circle r="4" fill="#e2e8f0" stroke="#64748b" strokeWidth=".6"/><text x="0" y="1" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.8" fontWeight="700" fill="#475569">ENTRY</text></g>
     </g>
-    <text x="8" y="12" fontFamily="Arial,sans-serif" fontSize="6" fontWeight="700" fill="#102a43">BITMA 2027</text>
-    <text x="8" y="18" fontFamily="Arial,sans-serif" fontSize="2.1" fill="#475569">ICCB · Bangladesh International Textile &amp; Apparel Machinery Exhibition</text>
-    <text x="8" y="23" fontFamily="Arial,sans-serif" fontSize="1.6" fill="#64748b">Hall footprints to scale · campus gaps illustrative · north ↑</text>
+    <text x="20" y="30" fontFamily="Arial,sans-serif" fontSize="7" fontWeight="700" fill="#102a43">BITMA 2027</text>
+    <text x="20" y="38" fontFamily="Arial,sans-serif" fontSize="2.4" fill="#475569">ICCB · Bangladesh International Textile &amp; Apparel Machinery Exhibition</text>
+    <text x="20" y="44" fontFamily="Arial,sans-serif" fontSize="1.8" fill="#64748b">Hall footprints to scale · campus gaps illustrative · north ↑</text>
   </>}
   {(layout.siteHalls||[]).map((h,i)=><g key={h.id} transform={`translate(${h.x} ${h.y})`} data-bitma-hall={h.id}>
     {onHallOpen&&(layout.siteHalls?.length||0)>1&&<rect data-bitma-hall-hit={h.id} x="-1" y="-1" width={h.width+2} height={h.height+2} fill="transparent" pointerEvents="all" role="button" tabIndex={0} aria-label={`Open ${h.name} floor plan`} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onHallOpen(h.id);}}}/>}
@@ -107,10 +107,10 @@ export function BitmaGrounds({layout,id,crop,onHallOpen}:{layout:FloorLayout;id:
    const service=signs.filter(s=>s.label==='SERVICE'||s.label==='BOOTH');
    if(food.length<2||service.length<2)return [];
    const w=2.5,hh=2.45,campusSide=!!h.northRotation&&(layout.siteHalls?.length||0)>1;
-   const position=(items:{x:number;y:number}[])=>campusSide
-    ?{x:items.reduce((a,b)=>a+b.x,0)/items.length-w/2,y:items.reduce((a,b)=>a+b.y,0)/items.length-hh/2}
+   const position=(items:{x:number;y:number}[],kind:'food'|'service')=>campusSide
+    ?BITMA_CAMPUS.amenities[h.id as keyof typeof BITMA_CAMPUS.amenities]?.[kind]||{x:items.reduce((a,b)=>a+b.x,0)/items.length-w/2,y:items.reduce((a,b)=>a+b.y,0)/items.length-hh/2}
     :{x:h.x-2.85,y:items.reduce((a,b)=>a+b.y,0)/items.length-hh/2};
-   const f=position(food),s=position(service);
+   const f=position(food,'food'),s=position(service,'service');
    const visible=(p:{x:number;y:number})=>!crop||(p.x>=crop.x&&p.x+w<=crop.x+crop.w&&p.y>=crop.y&&p.y+hh<=crop.y+crop.h);
    return [visible(f)&&AmenityButton({id:`${h.id}-food`,x:f.x,y:f.y,width:w,height:hh,title:`Food Court · ${h.name}`,lines:['FOOD','COURT']}),visible(s)&&AmenityButton({id:`${h.id}-service`,x:s.x,y:s.y,width:w,height:hh,title:`Service Booth · ${h.name}`,lines:['SERVICE','BOOTH']})];
   })}

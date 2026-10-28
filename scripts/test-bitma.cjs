@@ -19,15 +19,19 @@ test('site perimeter encloses every hall and facility without any area overlap',
   if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)value=!value;
  }return value;};
  const intersects=(a,b)=>a.x<b.x+b.width-1e-7&&a.x+a.width>b.x+1e-7&&a.y<b.y+b.height-1e-7&&a.y+a.height>b.y+1e-7;
+ const separation=(a,b)=>Math.hypot(Math.max(0,b.x-a.x-a.width,a.x-b.x-b.width),Math.max(0,b.y-a.y-a.height,a.y-b.y-b.height));
  const areas=[...g.layout.siteHalls.map(h=>({...h,id:`hall-${h.id}`})),...BITMA_CAMPUS.features];
  for(const area of areas){
   for(const [x,y] of [[area.x,area.y],[area.x+area.width,area.y],[area.x,area.y+area.height],[area.x+area.width,area.y+area.height]])assert(inside(x,y),`${area.id} lies outside the campus perimeter`);
  }
  for(let i=0;i<areas.length;i++)for(let j=i+1;j<areas.length;j++)assert(!intersects(areas[i],areas[j]),`${areas[i].id} overlaps ${areas[j].id}`);
+ const halls=g.layout.siteHalls;
+ for(let i=0;i<halls.length;i++)for(let j=i+1;j<halls.length;j++)assert(separation(halls[i],halls[j])>=20,`Hall ${halls[i].id} is too close to Hall ${halls[j].id}`);
+ for(const hall of halls)for(const feature of BITMA_CAMPUS.features)assert(separation(hall,feature)>=10,`${feature.id} is too close to Hall ${hall.id}`);
  for(const hall of g.layout.siteHalls){const clear={...hall,x:hall.x-2,y:hall.y-2,width:hall.width+4,height:hall.height+4};for(const feature of BITMA_CAMPUS.features)assert(!intersects(clear,feature),`${feature.id} enters Hall ${hall.id}'s 2m clear zone`);}
 });
 test('campus locations follow the supplied site-plan order without altering source coordinates',()=>{
- assert.equal(g.layout.width,430);assert.equal(g.layout.height,220);
+ assert.equal(g.layout.width,800);assert.equal(g.layout.height,570);
  for(const hall of bitmaSource.halls){
   const site=g.layout.siteHalls.find(item=>item.id===hall.id),target=BITMA_CAMPUS.origins[hall.id];
   assert.deepEqual({x:site.x,y:site.y},target);
@@ -126,6 +130,22 @@ test('food court and service booth buttons stay on the landscaped edge and away 
    assert(box.x>=h.x-3&&box.x+box.width<h.x,'amenity button is outside or over the hall');
    for(const st of map.stalls)assert(box.x+box.width<=st.x+1e-6||box.x>=st.x+st.width-1e-6||box.y+box.height<=st.y+1e-6||box.y>=st.y+st.height-1e-6,`${id} amenity button overlaps ${st.code}`);
   }
+ }
+});
+test('campus food court and service buttons stay outside halls, facilities and the site outline',()=>{
+ const polygon=BITMA_CAMPUS.boundary;
+ const inside=(x,y)=>{let value=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
+  const [xi,yi]=polygon[i],[xj,yj]=polygon[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)value=!value;
+ }return value;};
+ const halls=g.layout.siteHalls;
+ for(const [id,sets] of Object.entries(BITMA_CAMPUS.amenities))for(const [kind,p] of Object.entries(sets)){
+  const button={id:`${id}-${kind}`,...p,width:2.5,height:2.45};
+  const hall=halls.find(h=>h.id===id);assert(hall);
+  const intersects=(a,b)=>a.x<b.x+b.width-1e-7&&a.x+a.width>b.x+1e-7&&a.y<b.y+b.height-1e-7&&a.y+a.height>b.y+1e-7;
+  assert(!intersects(button,hall),`${button.id} overlaps its hall`);
+  for(const other of halls)assert(!intersects(button,other),`${button.id} overlaps Hall ${other.id}`);
+  for(const feature of BITMA_CAMPUS.features)assert(!intersects(button,feature),`${button.id} overlaps ${feature.id}`);
+  for(const [x,y] of [[button.x,button.y],[button.x+button.width,button.y],[button.x,button.y+button.height],[button.x+button.width,button.y+button.height]])assert(inside(x,y),`${button.id} is outside the campus perimeter`);
  }
 });
 test('stair artwork is identified and offset down from its source position',()=>{

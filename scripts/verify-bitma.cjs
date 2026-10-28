@@ -34,11 +34,11 @@ async function main(){
   assert.equal(await page.$eval('[aria-label="Preview expo"]',e=>e.value),'bitma-2027','BITMA is not the default exhibition');
   assert.equal(await page.$('[aria-label="Preview expo"] option[value="dtg-2027"]'),null,'Removed DTG 2027 is still listed');
   await delay(900);
-  assert(await page.$eval('[data-live-map]',s=>{const v=s.viewBox.baseVal;return v.x<=-16&&v.y<=-18&&v.x+v.width>=446&&v.y+v.height>=238;}),'Initial campus camera clipped the site plan');
+  assert(await page.$eval('[data-live-map]',s=>{const v=s.viewBox.baseVal;return v.x<=-16&&v.y<=-18&&v.x+v.width>=816&&v.y+v.height>=588;}),'Initial campus camera clipped the site plan');
   await page.screenshot({path:path.join(output,'campus.png'),fullPage:true});
   await page.click('[aria-label="Expand map"]');await page.waitForSelector('[data-map-workspace][data-stage="open"]');
   assert.equal(await page.$eval('[data-studio-navigation]',e=>getComputedStyle(e).visibility),'hidden');
-  assert(await page.$eval('[data-live-map]',s=>{const v=s.viewBox.baseVal;return v.x<=-16&&v.y<=-18&&v.x+v.width>=446&&v.y+v.height>=238;}),'Fullscreen campus camera clipped a hall or the site boundary');
+  assert(await page.$eval('[data-live-map]',s=>{const v=s.viewBox.baseVal;return v.x<=-16&&v.y<=-18&&v.x+v.width>=816&&v.y+v.height>=588;}),'Fullscreen campus camera clipped a hall or the site boundary');
   await page.screenshot({path:path.join(output,'campus-expanded.png'),fullPage:true});
   await page.click('[data-map-back]');await page.waitForSelector('[data-map-workspace][data-expanded="false"]');
   await page.click('[data-bitma-hall-open="4"]');await page.waitForSelector('[data-live-map][data-stall-count="62"]');
