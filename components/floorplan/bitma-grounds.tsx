@@ -4,6 +4,28 @@ import { mapTheme } from '@/lib/floorplan/map-colors';
 import { textWidth } from '@/lib/floorplan/map-text';
 import type { SceneRect } from '@/lib/floorplan/map-experience';
 import { gardenGateClip, gateApproach, wallSegments } from '@/lib/floorplan/map-gates';
+import { BITMA_CAMPUS } from '@/lib/floorplan/bitma-layout';
+
+function CampusFeatures(){
+ return <g data-bitma-campus-features pointerEvents="none">{BITMA_CAMPUS.features.map(f=>{
+  if(f.kind==='parking'){
+   const compact=f.width<20,pX=f.x+(compact?1:2),pY=f.y+(compact?1:2),pW=compact?5.2:6.2,pH=compact?6:7;
+   const showLabel=f.width>=25,showCar=f.height>=12&&f.width>=14,carX=f.x+f.width-8,carY=f.y+(f.height>=20?f.height-5:2.2);
+   return <g key={f.id} data-campus-feature={f.id} data-campus-feature-kind={f.kind}>
+    <rect x={f.x} y={f.y} width={f.width} height={f.height} rx=".8" fill="#e5e7eb"/>
+    <rect x={pX} y={pY} width={pW} height={pH} rx=".7" fill="#1682c4"/>
+    <text x={pX+pW/2} y={pY+pH*.76} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={compact?4.2:4.8} fontWeight="700" fill="#fff">P</text>
+    {showLabel&&<text x={f.x+f.width*.67} y={f.y+(f.height>=20?f.height*.59:f.height-2.2)} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize={f.height>=20?2.6:1.55} fontWeight="700" fill="#64748b">PARKING</text>}
+    {showCar&&<g transform={`translate(${carX} ${carY})`} fill="#334155"><path d="M.4 2.3 1.6.7h3.9l1.2 1.6h.9v1.5H.4Z"/><circle cx="2" cy="4" r=".55"/><circle cx="6" cy="4" r=".55"/></g>}
+   </g>;
+  }
+  const fill=f.kind==='service'?'#9ca3af':f.kind==='prayer'?'#8b929b':'#94a3b8';
+  return <g key={f.id} data-campus-feature={f.id} data-campus-feature-kind={f.kind}>
+   <rect x={f.x} y={f.y} width={f.width} height={f.height} rx=".35" fill={fill}/>
+   {f.id==='prayer-room'?<text x={f.x+f.width/2} y={f.y+f.height/2} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="2.6" fontWeight="700" fill="#fff" transform={`rotate(-90 ${f.x+f.width/2} ${f.y+f.height/2})`}>PRAYER ROOM</text>:f.id==='iccb-office'?<><text x={f.x+f.width/2} y={f.y+9} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="2.4" fontWeight="700" fill="#fff">ICCB</text><text x={f.x+f.width/2} y={f.y+13} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="2" fontWeight="700" fill="#fff">OFFICE</text></>:f.id==='inauguration-service-hall'?<text x={f.x+f.width/2} y={f.y+f.height/2} textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="2.1" fontWeight="700" fill="#fff" transform={`rotate(-90 ${f.x+f.width/2} ${f.y+f.height/2})`}>INAUGURATION &amp; SERVICE HALL</text>:null}
+  </g>;
+ })}</g>;
+}
 
 function CargoEntrySign({symbol}:{symbol:NonNullable<FloorLayout['siteSymbols']>[number]}){
  const w=symbol.width,h=symbol.height;
@@ -37,26 +59,19 @@ function AmenityButton({x,y,width,height,title,lines,id}:{x:number;y:number;widt
 
 /** Landscaping and wall elevations are visual; the floor rectangle is the metric boundary. */
 export function BitmaGrounds({layout,id,crop,onHallOpen}:{layout:FloorLayout;id:string;crop?:SceneRect;onHallOpen?:(hall:string)=>void}) {
+ const campusBoundaryPath=`M${BITMA_CAMPUS.boundary.map(([x,y])=>`${x} ${y}`).join('L')}Z`;
  const labelVisible=(x:number,y:number,text:string,size:number)=>!crop||
   (x-textWidth(text,size)/2>=crop.x&&x+textWidth(text,size)/2<=crop.x+crop.w&&y-size>=crop.y&&y+size<=crop.y+crop.h);
  return <g data-bitma-campus pointerEvents="none">
   <rect x="-5" y="-5" width={layout.width+10} height={layout.height+10} fill="#edf2f7"/>
   {(layout.siteHalls?.length||0)>1&&<>
     <g data-bitma-campus-outline>
-      <path d="M-8 150H196V105H219V-8H305V43H365L407 82 376 112V132H430V198H-8Z" fill="#f8fafc" stroke="#aeb9df" strokeWidth="2.2" strokeLinejoin="round"/>
-      <path d="M-2 153H200V101H222V-3H301V47H363L401 82 371 116V137H425" fill="none" stroke="#d2d7ea" strokeWidth=".8" strokeDasharray="2 2"/>
+      <path d={campusBoundaryPath} fill="#f8fafc" stroke="#aeb9df" strokeWidth="2.2" strokeLinejoin="round"/>
+      <path d="M-2 153H200V101H222V52H168V-3H301V47H372L422 62V82L375 128V137H425V217" fill="none" stroke="#d2d7ea" strokeWidth=".8" strokeDasharray="2 2"/>
       <path d="M208 100V150M258 76H319M255 151H340M302 49V108M376 115V163" fill="none" stroke="#c7cbd2" strokeWidth="1.1" strokeDasharray="1 1.5"/>
-      <g fontFamily="Arial,sans-serif" fontWeight="700" textAnchor="middle">
-        <rect x="177" y="14" width="42" height="28" rx="1" fill="#e5e7eb"/><text x="204" y="30" fontSize="3.5" fill="#596579">PARKING</text>
-        <rect x="251" y="62" width="11" height="33" rx=".3" fill="#9ca3af"/><text x="256.5" y="80" fontSize="2.6" fill="#fff" transform="rotate(-90 256.5 80)">PRAYER ROOM</text>
-        <rect x="291" y="121" width="17" height="19" rx=".3" fill="#94a3b8"/><text x="299.5" y="130" fontSize="2.4" fill="#fff">ICCB</text><text x="299.5" y="134" fontSize="2" fill="#fff">OFFICE</text>
-        <rect x="248" y="157" width="14" height="39" rx=".3" fill="#9ca3af"/><text x="255" y="178" fontSize="2.2" fill="#fff" transform="rotate(-90 255 178)">INAUGURATION &amp; SERVICE HALL</text>
-        <rect x="390" y="132" width="25" height="17" rx=".5" fill="#e5e7eb"/><text x="406" y="142" fontSize="3" fill="#64748b">PARKING</text>
-        <rect x="317" y="91" width="24" height="12" rx=".5" fill="#e5e7eb"/><text x="334" y="98" fontSize="2.5" fill="#64748b">PARKING</text>
-      </g>
-      {[{x:180,y:22},{x:391,y:135},{x:319,y:93}].map((p,i)=><g key={i} transform={`translate(${p.x} ${p.y})`}><rect width="6" height="7" rx=".7" fill="#1682c4"/><text x="3" y="5.4" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="4.8" fontWeight="700" fill="#fff">P</text></g>)}
+      <CampusFeatures/>
       <g transform="translate(66 30)" aria-label="North"><circle r="5" fill="#fff" stroke="#9ca3af" strokeWidth=".8"/><path d="M0-2 1.5 3 0 2 -1.5 3Z" fill="#dc2626"/><text x="0" y="-7" textAnchor="middle" fontFamily="serif" fontSize="5" fill="#334155">N</text></g>
-      <g transform="translate(337 197)"><circle r="4" fill="#e2e8f0" stroke="#64748b" strokeWidth=".6"/><text x="0" y="1" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.8" fontWeight="700" fill="#475569">ENTRY</text></g>
+      <g transform="translate(337 210)"><circle r="4" fill="#e2e8f0" stroke="#64748b" strokeWidth=".6"/><text x="0" y="1" textAnchor="middle" fontFamily="Arial,sans-serif" fontSize="1.8" fontWeight="700" fill="#475569">ENTRY</text></g>
     </g>
     <text x="8" y="12" fontFamily="Arial,sans-serif" fontSize="6" fontWeight="700" fill="#102a43">BITMA 2027</text>
     <text x="8" y="18" fontFamily="Arial,sans-serif" fontSize="2.1" fill="#475569">ICCB · Bangladesh International Textile &amp; Apparel Machinery Exhibition</text>

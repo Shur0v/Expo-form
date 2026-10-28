@@ -10,17 +10,30 @@ export const bitmaSource = source;
 export const BITMA_CAMPUS = {
   width: 430,
   height: 220,
+  boundary: [[-8,150],[196,150],[196,105],[219,105],[219,48],[165,48],[165,-8],[305,-8],[305,43],[375,43],[430,62],[430,82],[380,132],[430,132],[430,220],[-8,220]] as const,
   origins: {
     '1': { x: 350, y: 165 },
     '2': { x: 265, y: 128 },
-    '3': { x: 330, y: 64 },
+    '3': { x: 315, y: 64 },
     '4': { x: 230, y: 0 },
     '1A': { x: 310, y: 112 },
     '6': { x: 205, y: 108 },
-    '2A': { x: 280, y: 52 },
+    '2A': { x: 290, y: 72 },
     '4A': { x: 270, y: 0 },
     EZ: { x: 0, y: 162 },
   } satisfies Record<string, { x: number; y: number }>,
+  features: [
+    { id: 'parking-north-west', kind: 'parking', x: 177, y: 14, width: 42, height: 28 },
+    { id: 'north-east-service-area', kind: 'service', x: 289, y: 3, width: 13, height: 25 },
+    { id: 'parking-hall-4a-east', kind: 'parking', x: 289, y: 31, width: 14, height: 18 },
+    { id: 'parking-central-north', kind: 'parking', x: 262, y: 74, width: 15, height: 13 },
+    { id: 'parking-hall-3-east', kind: 'parking', x: 382, y: 50, width: 12, height: 12 },
+    { id: 'parking-hall-1a-east', kind: 'parking', x: 390, y: 137, width: 25, height: 17 },
+    { id: 'parking-hall-1-south-west', kind: 'parking', x: 326, y: 161, width: 18, height: 8 },
+    { id: 'prayer-room', kind: 'prayer', x: 255, y: 94, width: 11, height: 30 },
+    { id: 'iccb-office', kind: 'office', x: 292, y: 130, width: 14, height: 19 },
+    { id: 'inauguration-service-hall', kind: 'service', x: 254, y: 157, width: 7, height: 39 },
+  ],
 } as const;
 
 export function bitmaGeometry(scope = ''): MapGeometry {

@@ -12,6 +12,20 @@ let count=0;
 const test=(name,fn)=>{fn();count++;console.log('PASS '+name)};
 const near=(a,b)=>assert(Math.abs(a-b)<1e-6,`${a} differs from ${b}`);
 const g=bitmaGeometry();
+test('site perimeter encloses every hall and facility without any area overlap',()=>{
+ const polygon=BITMA_CAMPUS.boundary;
+ const inside=(x,y)=>{let value=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){
+  const [xi,yi]=polygon[i],[xj,yj]=polygon[j];
+  if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)value=!value;
+ }return value;};
+ const intersects=(a,b)=>a.x<b.x+b.width-1e-7&&a.x+a.width>b.x+1e-7&&a.y<b.y+b.height-1e-7&&a.y+a.height>b.y+1e-7;
+ const areas=[...g.layout.siteHalls.map(h=>({...h,id:`hall-${h.id}`})),...BITMA_CAMPUS.features];
+ for(const area of areas){
+  for(const [x,y] of [[area.x,area.y],[area.x+area.width,area.y],[area.x,area.y+area.height],[area.x+area.width,area.y+area.height]])assert(inside(x,y),`${area.id} lies outside the campus perimeter`);
+ }
+ for(let i=0;i<areas.length;i++)for(let j=i+1;j<areas.length;j++)assert(!intersects(areas[i],areas[j]),`${areas[i].id} overlaps ${areas[j].id}`);
+ for(const hall of g.layout.siteHalls){const clear={...hall,x:hall.x-2,y:hall.y-2,width:hall.width+4,height:hall.height+4};for(const feature of BITMA_CAMPUS.features)assert(!intersects(clear,feature),`${feature.id} enters Hall ${hall.id}'s 2m clear zone`);}
+});
 test('campus locations follow the supplied site-plan order without altering source coordinates',()=>{
  assert.equal(g.layout.width,430);assert.equal(g.layout.height,220);
  for(const hall of bitmaSource.halls){
