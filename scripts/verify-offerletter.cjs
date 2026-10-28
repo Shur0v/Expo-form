@@ -147,6 +147,30 @@ async function main() {
     assert.deepEqual(revoked.fields, issued.fields);
     await verification.close();
 
+    await clickText(page, 'New Borthers Machinery · Hall 4 offer');
+    assert.equal(await page.$eval('[aria-label="Company name"]',input=>input.value),'Borthers Machinery');
+    assert.equal(await page.$eval('[aria-label="Contact person"]',input=>input.value),'Ohaidur Rahman');
+    assert.equal(await page.$eval('[aria-label="Designation"]',input=>input.value),'Managing Partner');
+    assert.equal(await page.$eval('[aria-label="Total space (sq. ft.)"]',input=>input.value),'128');
+    assert.equal(await page.$eval('[aria-label="Price per stall"]',input=>input.value),'2000');
+    await page.select('[aria-label="Measurement unit"]','sqm');
+    assert.equal(await page.$eval('[aria-label="Stall width (m)"]',input=>input.value),'2.4384');
+    assert((await page.$eval('[data-offerletter]',e=>e.innerText)).includes('USD 3,600'));
+    await page.select('[aria-label="Measurement unit"]','sqft');
+    await fill(page,'Number of stalls','3');
+    assert.equal(await page.$eval('[aria-label="Total space (sq. ft.)"]',input=>input.value),'192');
+    assert((await page.$eval('[data-offerletter]',e=>e.innerText)).includes('USD 5,400'));
+    await fill(page,'Number of stalls','2');
+    await clickText(page,'Save draft');
+    await page.reload({waitUntil:'networkidle2'});
+    await page.waitForSelector('[aria-label="Total space (sq. ft.)"]');
+    assert.equal(await page.$eval('[aria-label="Total space (sq. ft.)"]',input=>input.value),'128');
+    await clickText(page,'Issue offer'); await clickText(page,'Confirm issue');
+    await page.waitForSelector('[data-offerletter] [aria-label="Check offer authenticity"] img');
+    await savePaper(page,'borthers-hall4');
+    await page.evaluate(()=>window.scrollTo(0,0));
+    await page.screenshot({path:path.join(output,'borthers-workspace.png'),fullPage:true});
+
     await page.click('[aria-label="Studio pages"] a[href="#top"]');
     await page.waitForSelector('[data-exhibition-sheet]');
     for (const [index, code] of ['DTA 2027', 'DCC 2027', 'DME 2027'].entries()) {

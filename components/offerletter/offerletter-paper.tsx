@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import QRCode from 'qrcode';
 import {Printer} from 'lucide-react';
 import type {ServiceRecord} from '@/lib/offerletter/types';
-import {offerAddressee,offerAmounts} from '@/lib/offerletter/model';
+import {offerAddressee,offerAmounts,offerMeasurement} from '@/lib/offerletter/model';
 import {useLocalImage} from './local-image';
 import styles from './offerletter-paper.module.css';
 
@@ -17,19 +17,23 @@ export function OfferletterPaper({record:r}:{record:ServiceRecord}){
  const qr=showVerification&&qrImage.key===verification?qrImage.value:'';
  useEffect(()=>{let active=true;if(showVerification&&verification)QRCode.toDataURL(location.origin+verification,{width:256,margin:2,errorCorrectionLevel:'M'}).then(value=>{if(active)setQr({key:verification,value});}).catch(()=>{});return()=>{active=false;};},[verification,showVerification]);
  const fmt=(n:number,digits=0)=>`${f.Currency} ${(n/100).toLocaleString('en-US',{minimumFractionDigits:digits,maximumFractionDigits:2})}`;
- const rows=[['Proposed Stall Position',f.Position],['Total Space',`${f.Area} sqm`],['Official Rack Rate',`${fmt(Number(f.Rate))}/sqm`],['Special Discount',`${Number(f.Discount)/100}%`],['Discounted Rate',`${fmt(a.rate)}/sqm`],['Total Rack Price',fmt(a.rack)],['Discount Amount',fmt(a.reduction)],['TOTAL OFFER PRICE',fmt(a.total)]];
+ const m=offerMeasurement(f),perStall=f.PricingBasis==='stall';
+ const rows=[['Proposed Stall Position',f.Position],...(perStall?[
+  ['Stall Size',`${m.width} × ${m.length} ${m.lengthUnit} per stall`],['Number of Stalls',f.StallCount],
+ ]:[]),[perStall?'Total Allocated Area':'Total Space',`${m.area} ${m.areaUnit}`],[perStall?'Price per Stall':'Official Rack Rate',`${fmt(Number(f.Rate)*(perStall?1:m.factor))}/${perStall?'stall':m.areaUnit}`],['Special Discount',`${Number(f.Discount)/100}%`],...(!perStall?[['Discounted Rate',`${fmt(a.rate*m.factor)}/${m.areaUnit}`]]:[]),[perStall?'Total Price':'Total Rack Price',fmt(a.rack)],['Discount Amount',fmt(a.reduction)],['TOTAL OFFER PRICE',fmt(a.total)]];
  return <section className={styles.preview} aria-label="A4 offer letter">
   <div className={styles.toolbar}><span>A4 · 210 × 297 mm · {r.status}</span><button type="button" onClick={()=>window.print()}><Printer size={15}/>Print / save as PDF</button></div>
   <div ref={frame} className={styles.frame} style={{height:1123*scale}}>
    <article data-offerletter className={styles.paper} style={{transform:`scale(${scale})`}}>
     <header className={styles.header}><img src="/assets/offerletter/eco-expo-logo-offerletter.png" alt="Eco Expo — Together we win"/><div><h2>ECO EXPO</h2><p>EVENT CONFERENCE EXHIBITION ORGANIZER</p></div></header>
-    <main className={styles.content}>
+    <main className={`${styles.content} ${perStall?styles.stallContent:''}`}>
      <div className={styles.title}><h3>SPECIAL PARTICIPATION OFFER</h3><p>{f.Event} | {f.Subtitle}</p></div>
-     <p>To: {recipient}{f.RecipientType!=='company'&&f.Company?` · ${f.Company}`:''}</p><p>Dear {recipient},</p>
+     <p>To: {recipient}{f.RecipientType!=='company'&&f.Company?` · ${f.Company}`:''}{f.ContactPerson&&<><br/>Contact: {f.ContactPerson}{f.Designation?` · ${f.Designation}`:''}</>}</p><p>Dear {recipient},</p>
      <p>Greetings from ECO Expo! Following our previous discussion, we are pleased to offer your company a special discounted rate for participating in <strong>{f.Event}</strong>, owned and organized by the {f.Organizer}.</p>
      <p><strong>Exhibition Dates:</strong> {f.Dates}<span className={styles.venue}><strong>Venue:</strong> {f.Venue}</span><br/><strong>Website:</strong> {f.Website}</p>
      <h4>PROPOSED STALL &amp; SPECIAL PRICING</h4>
-     <table className={styles.pricing}><thead><tr><th>Description</th><th>Details</th></tr></thead><tbody>{rows.map(([label,value],i)=><tr key={label} className={i===7?styles.total:undefined}><td>{label}</td><td>{value}</td></tr>)}</tbody></table>
+     <table className={styles.pricing}><thead><tr><th>Description</th><th>Details</th></tr></thead><tbody>{rows.map(([label,value],i)=><tr key={label} className={i===rows.length-1?styles.total:undefined}><td>{label}</td><td>{value}</td></tr>)}</tbody></table>
+     {f.AllocationNote&&<p className={styles.allocationNote}>{perStall&&<>Allocated space for {f.StallCount} stalls: {m.area} {m.areaUnit} ({m.width} × {m.length} {m.lengthUnit} each). </>}{f.AllocationNote}</p>}
      <h4>PAYMENT SCHEDULE</h4>
      <table className={styles.schedule}><thead><tr><th>Installment</th><th>Payment Deadline</th><th>Amount</th></tr></thead><tbody>{[40,30,30].map((percent,i)=><tr key={i}><td>{['1st','2nd','3rd'][i]} Installment ({percent}%)</td><td>By {offerDate(f[`Deadline${i+1}`])}</td><td>{fmt(a.installments[i],2)}</td></tr>)}<tr className={styles.total}><td colSpan={2}>TOTAL</td><td>{fmt(a.total,2)}</td></tr></tbody></table>
      <div className={styles.confirmation}><h4>CONFIRMATION &amp; BOOKING</h4><p>We kindly request your <strong>written confirmation within {f.ConfirmationHours} hours</strong> of receiving this offer and payment of the first installment no later than <strong>{offerDate(f.Deadline1)}</strong> to proceed with the booking and secure the proposed stall space.</p></div>

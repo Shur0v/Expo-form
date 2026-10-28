@@ -6,3 +6,4 @@
 .paper tbody tr:nth-child(odd){background:#f1f5f9}.paper tbody tr:nth-child(even){background:#fafbfc}
 
 .electronicAuthorization{position:absolute;bottom:88px;left:85px;right:85px;padding:3px 10px;background:#eaf0f5;border-radius:0 0 12px 12px;text-align:center;font:10px/14px Arial,sans-serif;color:#343434}
+.stallContent{margin-top:30px}.stallContent>p{margin-bottom:6px}.stallContent .pricing td{padding-top:1px;padding-bottom:1px}.allocationNote{margin-top:6px!important;font-size:9px}.stallContent .sealImage{top:628px;width:112px;height:112px}

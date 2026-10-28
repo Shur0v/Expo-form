@@ -1,6 +1,6 @@
 require('./floorplan-runtime.cjs');
 const assert = require('node:assert/strict');
-const { offerDefaults, offerAddressee, offerAmounts, validateOffer } = require('../lib/offerletter/model.ts');
+const { offerDefaults, offerAddressee, offerAmounts, validateOffer, offerMeasurement, borthersOfferFields } = require('../lib/offerletter/model.ts');
 let count = 0;
 function test(name, fn) { fn(); count++; console.log('PASS ' + name); }
 const draft = (fields = {}) => ({ id: 'qa-offer', module: 'offerletter', title: 'ECO/OFFER/QA', status: 'Draft', at: '2026-10-28T00:00:00.000Z', fields: { ...offerDefaults, RecipientType: 'company', Company: 'Offer QA Company', ...fields } });
@@ -10,6 +10,32 @@ test('reference screenshot pricing: 36 sqm, USD 320 and 5% discount', () => {
   assert.deepEqual(amount, { rack: 1152000, reduction: 57600, total: 1094400, rate: 30400, installments: [437760, 328320, 328320] });
 });
 test('source defaults retain USD 29,376 offer price', () => assert.equal(offerAmounts(offerDefaults).total, 2937600));
+test('Borthers Hall 4 allocation is exactly two 8 by 8 foot stalls', () => {
+  const m=offerMeasurement(borthersOfferFields);
+  assert.equal(m.area,'128'); assert.equal(m.width,'8'); assert.equal(m.length,'8');
+  validateOffer(draft(borthersOfferFields));
+});
+test('Borthers per-stall offer totals 4000 less 400 equals 3600', () => {
+  assert.deepEqual(offerAmounts(borthersOfferFields), { rack:400000,reduction:40000,total:360000,rate:180000,installments:[144000,108000,108000] });
+});
+test('changing display units never changes the actual area or price', () => {
+  const metres={...borthersOfferFields,Unit:'sqm'};
+  assert.equal(offerMeasurement(metres).area,'11.8916');
+  assert.equal(offerMeasurement(metres).width,'2.4384');
+  assert.deepEqual(offerAmounts(metres),offerAmounts(borthersOfferFields));
+});
+test('legacy area-based offers retain their original units and totals', () => {
+  assert.equal(offerMeasurement(offerDefaults).areaUnit,'sqm');
+  assert.equal(offerAmounts({...offerDefaults,Unit:'sqft'}).total,2937600);
+});
+test('per-stall pricing rejects fractional stall counts and mismatched allocation', () => {
+  assert.throws(()=>validateOffer(draft({...borthersOfferFields,StallCount:'1.5'})));
+  assert.throws(()=>validateOffer(draft({...borthersOfferFields,Area:'9'})));
+});
+test('measurement and pricing selectors reject unknown modes', () => {
+  assert.throws(()=>validateOffer(draft({Unit:'yards'})));
+  assert.throws(()=>validateOffer(draft({PricingBasis:'unknown'})));
+});
 test('installment rounding preserves the last cent', () => assert.deepEqual(offerAmounts(draft({ Area: '1', Rate: '101', Discount: '0' }).fields).installments, [40, 30, 31]));
 test('decimal areas and basis-point discounts use integer minor units', () => assert.deepEqual(offerAmounts(draft({ Area: '1.25', Rate: '3399', Discount: '1234' }).fields), { rack: 4249, reduction: 524, total: 3725, rate: 2980, installments: [1490, 1118, 1117] }));
 test('company and individual addressees match the source', () => {
